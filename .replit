@@ -39,6 +39,6 @@ localPort = 35997
 externalPort = 3000
 
 [deployment]
-build = ["sh", "-c", "cp target/* public/downloads"]
+build = ["sh", "-c", "./gradlew :spigot:build :fabric-1.21.6:build :forge-1.21.6:build && cp target/* public/downloads"]
 deploymentTarget = "static"
 publicDir = "public"
