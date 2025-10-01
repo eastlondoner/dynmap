@@ -34,7 +34,9 @@ dependencies {
 
     shadow project(path: ':DynmapCore', configuration: 'shadow')
 
-    modCompileOnly "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
+    compileOnly 'org.checkerframework:checker-qual:3.42.0'
+    modCompileOnly 'org.checkerframework:checker-qual:3.42.0'
+    modCompileOnly "me.lucko:fabric-permissions-api:0.4.1"
     compileOnly 'net.luckperms:api:5.4'
 }
 
