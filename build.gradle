@@ -30,14 +30,24 @@ allprojects  {
   repositories {
      mavenLocal()
      maven { url 'https://libraries.minecraft.net/' }
-     maven { url "https://maven.pkg.github.com/linktosriram/s3-lite"
+     maven { 
+          url "https://maven.pkg.github.com/linktosriram/s3-lite"
           credentials {
               username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
               password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
           }
+          content {
+              includeGroup "io.github.linktosriram.s3lite"
+          }
      }
-     maven { url "https://oss.sonatype.org/content/repositories/releases" }
-     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+     maven { 
+          url "https://oss.sonatype.org/content/repositories/releases"
+          allowInsecureProtocol = true
+     }
+     maven { 
+          url "https://oss.sonatype.org/content/repositories/snapshots"
+          allowInsecureProtocol = true
+     }
      maven { url "https://repo.mikeprimm.com" }
      maven { url "https://repo.maven.apache.org/maven2" }
      maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
@@ -66,7 +76,7 @@ subprojects {
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
   tasks.withType(JavaCompile) {
-  	options.encoding = 'UTF-8'
+        options.encoding = 'UTF-8'
   }
 }
 
