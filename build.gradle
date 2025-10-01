@@ -34,7 +34,7 @@ allprojects  {
           url "https://maven.pkg.github.com/linktosriram/s3-lite"
           credentials {
               username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-              password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+              password = project.findProperty("gpr.key") ?: System.getenv("PASSWORD")
           }
           content {
               includeGroup "io.github.linktosriram.s3lite"
