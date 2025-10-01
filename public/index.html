@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynmap® Plugin Downloads</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .intro {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .intro h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .download-section {
+            margin-top: 30px;
+        }
+        
+        .download-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+        }
+        
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .platform-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .platform-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .platform-card h3 {
+            color: #2c3e50;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        
+        .platform-card .version {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+        
+        .platform-card .description {
+            color: #34495e;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .download-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: opacity 0.3s ease;
+        }
+        
+        .download-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .build-info {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 30px;
+            border-radius: 5px;
+        }
+        
+        .build-info h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .build-info p {
+            color: #856404;
+        }
+        
+        .build-info code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+        
+        footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Dynmap® Plugin Downloads</h1>
+            <p>Dynamic web-based maps for Minecraft servers</p>
+        </header>
+        
+        <div class="content">
+            <div class="intro">
+                <h2>About Dynmap</h2>
+                <p>Dynmap® is a powerful plugin that provides dynamic, real-time web-based maps for your Minecraft server. Players can view their world through a web browser, see live player locations, and explore the terrain even when they're not in-game.</p>
+            </div>
+            
+            <div class="download-section">
+                <h2>Choose Your Server Platform</h2>
+                
+                <div class="platform-grid">
+                    <div class="platform-card">
+                        <h3>Spigot / PaperMC</h3>
+                        <div class="version">Compatible with Minecraft 1.10.2 - 1.21.4</div>
+                        <div class="description">
+                            Perfect for Spigot, PaperMC, and compatible server implementations. The most widely used version with full feature support.
+                        </div>
+                        <a href="https://www.spigotmc.org/resources/dynmap%C2%AE.274/" class="download-btn" target="_blank">Download from SpigotMC</a>
+                    </div>
+                    
+                    <div class="platform-card">
+                        <h3>Fabric</h3>
+                        <div class="version">Minecraft 1.14.4 - 1.21.6</div>
+                        <div class="description">
+                            For Fabric mod loader servers. Lightweight and modular, perfect for modded Minecraft servers running Fabric.
+                        </div>
+                        <a href="https://www.curseforge.com/minecraft/mc-mods/dynmapforge" class="download-btn" target="_blank">Download from CurseForge</a>
+                    </div>
+                    
+                    <div class="platform-card">
+                        <h3>Forge</h3>
+                        <div class="version">Minecraft 1.12.2 - 1.21.6</div>
+                        <div class="description">
+                            For Forge mod loader servers. Full integration with Forge's modding ecosystem and compatible with other Forge mods.
+                        </div>
+                        <a href="https://www.curseforge.com/minecraft/mc-mods/dynmapforge" class="download-btn" target="_blank">Download from CurseForge</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="build-info">
+                <h3>Building from Source</h3>
+                <p>To build Dynmap from source code, you'll need:</p>
+                <ul style="margin: 10px 0 10px 20px; color: #856404;">
+                    <li>JDK 21 (for Minecraft 1.20.5+ support)</li>
+                    <li>Gradle 8.7+</li>
+                </ul>
+                <p>Run the following command to build all platforms:</p>
+                <p style="margin-top: 10px;"><code>./gradlew setup build</code></p>
+                <p style="margin-top: 10px;">Built JARs will be placed in the <code>target/</code> directory.</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Dynmap® is a registered trademark of Michael Primm, TX USA. All Rights Reserved.</p>
+            <p style="margin-top: 10px;">
+                <a href="https://github.com/webbukkit/dynmap" target="_blank">GitHub</a> | 
+                <a href="https://discord.gg/52pqBpw" target="_blank">Discord</a> | 
+                <a href="https://www.reddit.com/r/Dynmap/" target="_blank">Reddit</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
