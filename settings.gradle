@@ -9,27 +9,27 @@ pluginManagement {
 rootProject.name = 'dynmap-common'
 
 include ':spigot'
-//include ':bukkit-helper-113-2'
-//include ':bukkit-helper-114-1'
-//include ':bukkit-helper-115'
-//include ':bukkit-helper-116'
-//include ':bukkit-helper-116-2'
-//include ':bukkit-helper-116-3'
-//include ':bukkit-helper-116-4'
-//include ':bukkit-helper-117'
-//include ':bukkit-helper-118'
-//include ':bukkit-helper-118-2'
-//include ':bukkit-helper-119'
-//include ':bukkit-helper-119-3'
-//include ':bukkit-helper-119-4'
-//include ':bukkit-helper-120'
-//include ':bukkit-helper-120-2'
-//include ':bukkit-helper-120-4'
-//include ':bukkit-helper-120-5'
-//include ':bukkit-helper-121'
-//include ':bukkit-helper-121-3'
-//include ':bukkit-helper-121-4'
-//include ':bukkit-helper-121-5'
+include ':bukkit-helper-113-2'
+include ':bukkit-helper-114-1'
+include ':bukkit-helper-115'
+include ':bukkit-helper-116'
+include ':bukkit-helper-116-2'
+include ':bukkit-helper-116-3'
+include ':bukkit-helper-116-4'
+include ':bukkit-helper-117'
+include ':bukkit-helper-118'
+include ':bukkit-helper-118-2'
+include ':bukkit-helper-119'
+include ':bukkit-helper-119-3'
+include ':bukkit-helper-119-4'
+include ':bukkit-helper-120'
+include ':bukkit-helper-120-2'
+include ':bukkit-helper-120-4'
+include ':bukkit-helper-120-5'
+include ':bukkit-helper-121'
+include ':bukkit-helper-121-3'
+include ':bukkit-helper-121-4'
+include ':bukkit-helper-121-5'
 include ':bukkit-helper-121-6'
 include ':bukkit-helper'
 include ':dynmap-api'
@@ -38,7 +38,7 @@ include ':DynmapCoreAPI'
 //include ':fabric-1.21.1'
 //include ':fabric-1.21.3'
 //include ':fabric-1.21.5'
-include ':fabric-1.21.6'
+//include ':fabric-1.21.6'
 //include ':fabric-1.21'
 //include ':fabric-1.20.6'
 //include ':fabric-1.19.4'
@@ -60,27 +60,27 @@ include ':forge-1.21.6'
 //include ':forge-1.14.4'
 
 project(':spigot').projectDir = "$rootDir/spigot" as File
-//project(':bukkit-helper-113-2').projectDir = "$rootDir/bukkit-helper-113-2" as File
-//project(':bukkit-helper-114-1').projectDir = "$rootDir/bukkit-helper-114-1" as File
-//project(':bukkit-helper-115').projectDir = "$rootDir/bukkit-helper-115" as File
-//project(':bukkit-helper-116').projectDir = "$rootDir/bukkit-helper-116" as File
-//project(':bukkit-helper-116-2').projectDir = "$rootDir/bukkit-helper-116-2" as File
-//project(':bukkit-helper-116-3').projectDir = "$rootDir/bukkit-helper-116-3" as File
-//project(':bukkit-helper-116-4').projectDir = "$rootDir/bukkit-helper-116-4" as File
-//project(':bukkit-helper-117').projectDir = "$rootDir/bukkit-helper-117" as File
-//project(':bukkit-helper-118').projectDir = "$rootDir/bukkit-helper-118" as File
-//project(':bukkit-helper-118-2').projectDir = "$rootDir/bukkit-helper-118-2" as File
-//project(':bukkit-helper-119').projectDir = "$rootDir/bukkit-helper-119" as File
-//project(':bukkit-helper-119-3').projectDir = "$rootDir/bukkit-helper-119-3" as File
-//project(':bukkit-helper-119-4').projectDir = "$rootDir/bukkit-helper-119-4" as File
-//project(':bukkit-helper-120').projectDir = "$rootDir/bukkit-helper-120" as File
-//project(':bukkit-helper-120-2').projectDir = "$rootDir/bukkit-helper-120-2" as File
-//project(':bukkit-helper-120-4').projectDir = "$rootDir/bukkit-helper-120-4" as File
-//project(':bukkit-helper-120-5').projectDir = "$rootDir/bukkit-helper-120-5" as File
-//project(':bukkit-helper-121').projectDir = "$rootDir/bukkit-helper-121" as File
-//project(':bukkit-helper-121-3').projectDir = "$rootDir/bukkit-helper-121-3" as File
-//project(':bukkit-helper-121-4').projectDir = "$rootDir/bukkit-helper-121-4" as File
-//project(':bukkit-helper-121-5').projectDir = "$rootDir/bukkit-helper-121-5" as File
+project(':bukkit-helper-113-2').projectDir = "$rootDir/bukkit-helper-113-2" as File
+project(':bukkit-helper-114-1').projectDir = "$rootDir/bukkit-helper-114-1" as File
+project(':bukkit-helper-115').projectDir = "$rootDir/bukkit-helper-115" as File
+project(':bukkit-helper-116').projectDir = "$rootDir/bukkit-helper-116" as File
+project(':bukkit-helper-116-2').projectDir = "$rootDir/bukkit-helper-116-2" as File
+project(':bukkit-helper-116-3').projectDir = "$rootDir/bukkit-helper-116-3" as File
+project(':bukkit-helper-116-4').projectDir = "$rootDir/bukkit-helper-116-4" as File
+project(':bukkit-helper-117').projectDir = "$rootDir/bukkit-helper-117" as File
+project(':bukkit-helper-118').projectDir = "$rootDir/bukkit-helper-118" as File
+project(':bukkit-helper-118-2').projectDir = "$rootDir/bukkit-helper-118-2" as File
+project(':bukkit-helper-119').projectDir = "$rootDir/bukkit-helper-119" as File
+project(':bukkit-helper-119-3').projectDir = "$rootDir/bukkit-helper-119-3" as File
+project(':bukkit-helper-119-4').projectDir = "$rootDir/bukkit-helper-119-4" as File
+project(':bukkit-helper-120').projectDir = "$rootDir/bukkit-helper-120" as File
+project(':bukkit-helper-120-2').projectDir = "$rootDir/bukkit-helper-120-2" as File
+project(':bukkit-helper-120-4').projectDir = "$rootDir/bukkit-helper-120-4" as File
+project(':bukkit-helper-120-5').projectDir = "$rootDir/bukkit-helper-120-5" as File
+project(':bukkit-helper-121').projectDir = "$rootDir/bukkit-helper-121" as File
+project(':bukkit-helper-121-3').projectDir = "$rootDir/bukkit-helper-121-3" as File
+project(':bukkit-helper-121-4').projectDir = "$rootDir/bukkit-helper-121-4" as File
+project(':bukkit-helper-121-5').projectDir = "$rootDir/bukkit-helper-121-5" as File
 project(':bukkit-helper-121-6').projectDir = "$rootDir/bukkit-helper-121-6" as File
 project(':bukkit-helper').projectDir = "$rootDir/bukkit-helper" as File
 project(':dynmap-api').projectDir = "$rootDir/dynmap-api" as File
@@ -89,7 +89,7 @@ project(':DynmapCoreAPI').projectDir = "$rootDir/DynmapCoreAPI" as File
 //project(':fabric-1.21.1').projectDir = "$rootDir/fabric-1.21.1" as File
 //project(':fabric-1.21.3').projectDir = "$rootDir/fabric-1.21.3" as File
 //project(':fabric-1.21.5').projectDir = "$rootDir/fabric-1.21.5" as File
-project(':fabric-1.21.6').projectDir = "$rootDir/fabric-1.21.6" as File
+//project(':fabric-1.21.6').projectDir = "$rootDir/fabric-1.21.6" as File
 //project(':fabric-1.21').projectDir = "$rootDir/fabric-1.21" as File
 //project(':fabric-1.20.6').projectDir = "$rootDir/fabric-1.20.6" as File
 //project(':fabric-1.19.4').projectDir = "$rootDir/fabric-1.19.4" as File
