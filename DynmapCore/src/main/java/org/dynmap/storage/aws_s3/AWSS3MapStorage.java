@@ -31,7 +31,7 @@ import org.dynmap.utils.BufferInputStream;
 import org.dynmap.utils.BufferOutputStream;
 
 import com.github.davidmoten.aws.lw.client.Client;
-import com.github.davidmoten.aws.lw.client.Credentials;
+import com.github.davidmoten.aws.lw.client.HttpMethod;
 import com.github.davidmoten.aws.lw.client.Response;
 import com.github.davidmoten.aws.lw.client.ServiceException;
 
@@ -60,7 +60,7 @@ public class AWSS3MapStorage extends MapStorage {
                 Client s3 = null;
                 try {
                         s3 = getConnection();
-                        Response response = s3.path(bucketname + "/" + baseKey).method("HEAD").response();
+                        s3.path(bucketname, baseKey).method(HttpMethod.HEAD).execute();
                         exists = true;
             } catch (ServiceException x) {
                 if (!x.getMessage().contains("NoSuchKey") && !x.getMessage().contains("404")) {
@@ -80,10 +80,10 @@ public class AWSS3MapStorage extends MapStorage {
                 Client s3 = null;
                 try {
                         s3 = getConnection();
-                        Response response = s3.path(bucketname + "/" + baseKey).method("HEAD").response();
-                        String v = response.header("x-amz-meta-x-dynmap-hash").orElse(null);
-                        if (v != null) {
-                                long storedHash = Long.parseLong(v, 16);
+                        Response response = s3.path(bucketname, baseKey).method(HttpMethod.HEAD).response();
+                        String metadataHeader = getResponseHeader(response, "x-amz-meta-x-dynmap-hash");
+                        if (metadataHeader != null) {
+                                long storedHash = Long.parseLong(metadataHeader, 16);
                                 matches = (storedHash == hash);
                         }
             } catch (ServiceException x) {
@@ -103,18 +103,19 @@ public class AWSS3MapStorage extends MapStorage {
                 Client s3 = null;
                 try {
                         s3 = getConnection();
-                        Response response = s3.path(bucketname + "/" + baseKey).response();
-                        if (response != null) {
+                        Response response = s3.path(bucketname, baseKey).response();
+                        if (response != null && response.isOk()) {
                     TileRead tr = new TileRead();
-                    byte[] buf = response.content();
+                    byte[] buf = response.contentBytes();
                     if (buf == null) { return null; }
                         tr.image = new BufferInputStream(buf);
-                    tr.format = ImageEncoding.fromContentType(response.contentType().orElse("application/octet-stream"));
-                    String v = response.header("x-amz-meta-x-dynmap-hash").orElse(null);
+                    String ct = getResponseHeader(response, "Content-Type");
+                    tr.format = ImageEncoding.fromContentType(ct != null ? ct : "application/octet-stream");
+                    String v = getResponseHeader(response, "x-amz-meta-x-dynmap-hash");
                     if (v != null) {
                         tr.hashCode = Long.parseLong(v, 16);
                     }
-                    v = response.header("x-amz-meta-x-dynmap-ts").orElse(null);
+                    v = getResponseHeader(response, "x-amz-meta-x-dynmap-ts");
                     if (v != null) {
                         tr.lastModified = Long.parseLong(v);
                     }
@@ -139,14 +140,14 @@ public class AWSS3MapStorage extends MapStorage {
                 try {
                 s3 = getConnection();
                         if (encImage == null) {
-                                s3.path(bucketname + "/" + baseKey).method("DELETE").execute();
+                                s3.path(bucketname, baseKey).method(HttpMethod.DELETE).execute();
                         }
                         else {
-                    s3.path(bucketname + "/" + baseKey)
-                        .method("PUT")
+                    s3.path(bucketname, baseKey)
+                        .method(HttpMethod.PUT)
                         .header("Content-Type", map.getImageFormat().getEncoding().getContentType())
-                        .header("x-amz-meta-x-dynmap-hash", Long.toHexString(hash))
-                        .header("x-amz-meta-x-dynmap-ts", Long.toString(timestamp))
+                        .metadata("x-dynmap-hash", Long.toHexString(hash))
+                        .metadata("x-dynmap-ts", Long.toString(timestamp))
                         .requestBody(Arrays.copyOf(encImage.buf, encImage.len))
                         .execute();
                         }
@@ -263,13 +264,8 @@ public class AWSS3MapStorage extends MapStorage {
         String region_name = core.configuration.getString("storage/region", "us-east-1");
         String region_endpoint = core.configuration.getString("storage/override_endpoint", "");
 
-        if (region_endpoint.length() > 0) {
-            endpoint = region_endpoint;
-            region = region_name;
-        } else {
-            region = region_name;
-            endpoint = null;
-        }
+        region = region_name;
+        endpoint = region_endpoint.length() > 0 ? region_endpoint : null;
 
         if ((prefix.length() > 0) && (prefix.charAt(prefix.length()-1) != '/')) {
                 prefix += '/';
@@ -283,9 +279,9 @@ public class AWSS3MapStorage extends MapStorage {
                 return false;
             }
                 String response = s3.path(bucketname)
-                        .param("list-type", "2")
-                        .param("prefix", prefix)
-                        .param("max-keys", "1")
+                        .query("list-type", "2")
+                        .query("prefix", prefix)
+                        .query("max-keys", "1")
                         .responseAsUtf8();
                 if (response == null || !response.contains("ListBucketResult")) {
                         Log.severe("Error: cannot find or access S3 bucket");
@@ -362,14 +358,14 @@ public class AWSS3MapStorage extends MapStorage {
         try {
                 s3 = getConnection();
                 while (!done) {
-                        com.github.davidmoten.aws.lw.client.RequestBuilder builder = s3.path(bucketname)
-                                .param("list-type", "2")
-                                .param("prefix", basekey)
-                                .param("max-keys", "1000");
+                        com.github.davidmoten.aws.lw.client.Request req = s3.path(bucketname)
+                                .query("list-type", "2")
+                                .query("prefix", basekey)
+                                .query("max-keys", "1000");
                         if (continuationToken != null) {
-                                builder = builder.param("continuation-token", continuationToken);
+                                req = req.query("continuation-token", continuationToken);
                         }
-                        String response = builder.responseAsUtf8();
+                        String response = req.responseAsUtf8();
                         List<String> keys = parseS3ListResponse(response);
                         for (String key : keys) { 
                                 key = key.substring(basekey.length());
@@ -472,17 +468,17 @@ public class AWSS3MapStorage extends MapStorage {
                 s3 = getConnection();
                 boolean done = false;
                 while (!done) {
-                        com.github.davidmoten.aws.lw.client.RequestBuilder builder = s3.path(bucketname)
-                                .param("list-type", "2")
-                                .param("prefix", basekey)
-                                .param("max-keys", "1000");
+                        com.github.davidmoten.aws.lw.client.Request req = s3.path(bucketname)
+                                .query("list-type", "2")
+                                .query("prefix", basekey)
+                                .query("max-keys", "1000");
                         if (continuationToken != null) {
-                                builder = builder.param("continuation-token", continuationToken);
+                                req = req.query("continuation-token", continuationToken);
                         }
-                        String response = builder.responseAsUtf8();
+                        String response = req.responseAsUtf8();
                         List<String> keys = parseS3ListResponse(response);
                         for (String key : keys) { 
-                                s3.path(bucketname + "/" + key).method("DELETE").execute();
+                                s3.path(bucketname, key).method(HttpMethod.DELETE).execute();
                         }
                         if (response.contains("<IsTruncated>true</IsTruncated>")) {
                         continuationToken = extractXmlValue(response, "NextContinuationToken");
@@ -528,11 +524,11 @@ public class AWSS3MapStorage extends MapStorage {
         try {
                 s3 = getConnection();
                 if (encImage == null) {
-                        s3.path(bucketname + "/" + baseKey).method("DELETE").execute();
+                        s3.path(bucketname, baseKey).method(HttpMethod.DELETE).execute();
                 }
                 else {
-            s3.path(bucketname + "/" + baseKey)
-                .method("PUT")
+            s3.path(bucketname, baseKey)
+                .method(HttpMethod.PUT)
                 .header("Content-Type", "image/png")
                 .requestBody(Arrays.copyOf(encImage.buf, encImage.len))
                 .execute();
@@ -555,7 +551,7 @@ public class AWSS3MapStorage extends MapStorage {
         Client s3 = null;
         try {
                 s3 = getConnection();
-                byte[] imagedata = s3.path(bucketname + "/" + baseKey).responseAsBytes();
+                byte[] imagedata = s3.path(bucketname, baseKey).responseAsBytes();
             image = new BufferInputStream(imagedata);
         } catch (ServiceException x) {
                 if (!x.getMessage().contains("NoSuchKey")) {
@@ -575,7 +571,7 @@ public class AWSS3MapStorage extends MapStorage {
         Client s3 = null;
         try {
                 s3 = getConnection();
-                Response response = s3.path(bucketname + "/" + baseKey).method("HEAD").response();
+                s3.path(bucketname, baseKey).method(HttpMethod.HEAD).execute();
                 exists = true;
         } catch (ServiceException x) {
                 if (!x.getMessage().contains("NoSuchKey") && !x.getMessage().contains("404")) {
@@ -596,11 +592,11 @@ public class AWSS3MapStorage extends MapStorage {
         try {
                 s3 = getConnection();
                 if (encImage == null) {
-                        s3.path(bucketname + "/" + baseKey).method("DELETE").execute();
+                        s3.path(bucketname, baseKey).method(HttpMethod.DELETE).execute();
                 }
                 else {
-            s3.path(bucketname + "/" + baseKey)
-                .method("PUT")
+            s3.path(bucketname, baseKey)
+                .method(HttpMethod.PUT)
                 .header("Content-Type", "image/png")
                 .requestBody(Arrays.copyOf(encImage.buf, encImage.len))
                 .execute();
@@ -622,7 +618,7 @@ public class AWSS3MapStorage extends MapStorage {
         Client s3 = null;
         try {
                 s3 = getConnection();
-                byte[] imagedata = s3.path(bucketname + "/" + baseKey).responseAsBytes();
+                byte[] imagedata = s3.path(bucketname, baseKey).responseAsBytes();
             image = new BufferInputStream(imagedata);
         } catch (ServiceException x) {
                 if (!x.getMessage().contains("NoSuchKey")) {
@@ -643,11 +639,11 @@ public class AWSS3MapStorage extends MapStorage {
         try {
                 s3 = getConnection();
                 if (content == null) {
-                        s3.path(bucketname + "/" + baseKey).method("DELETE").execute();
+                        s3.path(bucketname, baseKey).method(HttpMethod.DELETE).execute();
                 }
                 else {
-            s3.path(bucketname + "/" + baseKey)
-                .method("PUT")
+            s3.path(bucketname, baseKey)
+                .method(HttpMethod.PUT)
                 .header("Content-Type", "application/json")
                 .requestBody(Arrays.copyOf(content.buf, content.len))
                 .execute();
@@ -731,7 +727,7 @@ public class AWSS3MapStorage extends MapStorage {
                         if ((cacheval != null) && (cacheval.length == 0)) {
                                 return true;
                         }
-                            s3.path(bucketname + "/" + baseKey).method("DELETE").execute();
+                            s3.path(bucketname, baseKey).method(HttpMethod.DELETE).execute();
                             standalone_cache.put(fileid, new byte[0]);
                 }
                 else {
@@ -762,8 +758,8 @@ public class AWSS3MapStorage extends MapStorage {
                         else if (fileid.endsWith(".js")) {
                                 ct = "application/x-javascript";
                         }
-                s3.path(bucketname + "/" + baseKey)
-                    .method("PUT")
+                s3.path(bucketname, baseKey)
+                    .method(HttpMethod.PUT)
                     .header("Content-Type", ct)
                     .requestBody(Arrays.copyOf(content.buf, content.len))
                     .execute();
@@ -793,12 +789,17 @@ public class AWSS3MapStorage extends MapStorage {
                 }
                 if (c == null) {
                     if (cpoolCount < POOLSIZE) {
-                        Credentials credentials = Credentials.create(access_key_id, secret_access_key);
+                        com.github.davidmoten.aws.lw.client.Client.Builder builder = Client.s3()
+                            .region(region)
+                            .accessKey(access_key_id)
+                            .secretKey(secret_access_key);
+                        
                         if (endpoint != null) {
-                            c = Client.s3(credentials, region, endpoint);
-                        } else {
-                            c = Client.s3(credentials, region);
+                            builder = builder.baseUrlFactory((service, reg) -> endpoint);
                         }
+                        
+                        c = builder.build();
+                        
                         if (c == null) {
                                 Log.severe("Error creating S3 access client");      
                                 return null;
@@ -833,6 +834,14 @@ public class AWSS3MapStorage extends MapStorage {
                 cpoolCount--;
                 cpool.notifyAll();
             }
+        }
+    }
+
+    private String getResponseHeader(Response response, String headerName) {
+        try {
+            return response.headers().get(headerName);
+        } catch (Exception e) {
+            return null;
         }
     }
 
