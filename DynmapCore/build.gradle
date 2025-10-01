@@ -86,6 +86,7 @@ shadowJar {
         relocate('jakarta.activation', 'org.dynmap.shaded.jakarta.activation')
         relocate('org.glassfish.jaxb', 'org.dynmap.shaded.glassfish.jaxb')
         relocate('com.sun.xml.bind', 'org.dynmap.shaded.glassfish.jaxb')
+        relocate('com.sun.xml.txw2', 'org.dynmap.shaded.txw2')
         relocate('com.sun.istack', 'org.dynmap.shaded.istack')
         
     mergeServiceFiles()
