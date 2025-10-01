@@ -121,6 +121,7 @@ jar {
 }
 
 shadowJar {
+  zip64 true
     dependencies {
         include(dependency('org.bstats::'))
         include(dependency(':dynmap-api'))
