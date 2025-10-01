@@ -26,6 +26,9 @@ dependencies {
     implementation 'io.github.linktosriram.s3lite:util:0.0.2-SNAPSHOT'
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
     implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
+    implementation 'jakarta.activation:jakarta.activation-api:2.1.3'
+    implementation 'com.sun.istack:istack-commons-runtime:4.1.2'
+    implementation 'org.glassfish.jaxb:txw2:4.0.5'
 }
 
 processResources {
@@ -67,6 +70,8 @@ shadowJar {
         include(dependency('io.github.linktosriram.s3lite:util:'))
         include(dependency('jakarta.xml.bind::'))
         include(dependency('org.glassfish.jaxb::'))
+        include(dependency('jakarta.activation::'))
+        include(dependency('com.sun.istack::'))
         include(dependency(':DynmapCoreAPI'))
         exclude("META-INF/maven/**")
         }
@@ -78,8 +83,10 @@ shadowJar {
         relocate('org.postgresql', 'org.dynmap.org.postgresql')
         relocate('io.github.linktosriram.s3lite', 'org.dynmap.s3lite')
         relocate('jakarta.xml.bind', 'org.dynmap.shaded.jakarta.xml.bind')
+        relocate('jakarta.activation', 'org.dynmap.shaded.jakarta.activation')
         relocate('org.glassfish.jaxb', 'org.dynmap.shaded.glassfish.jaxb')
         relocate('com.sun.xml.bind', 'org.dynmap.shaded.glassfish.jaxb')
+        relocate('com.sun.istack', 'org.dynmap.shaded.istack')
         
     mergeServiceFiles()
         

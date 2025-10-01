@@ -29,13 +29,18 @@ Note: Building requires JDK 21 for latest versions. Built JARs appear in the `ta
 
 ### Recent Updates
 
-**JAXB Fix for AWS S3 Storage (January 2025)**
+**JAXB Fix for AWS S3 Storage (October 2025)**
 
-Fixed a critical issue where Dynmap would throw `jakarta.xml.bind.JAXBException` when using the AWS S3 storage backend on Java 17/21. The fix includes:
+Fixed a critical issue where Dynmap would throw `jakarta.xml.bind.JAXBException` when using the AWS S3 storage backend on Java 17/21. The complete fix includes:
 
-- Updated JAXB dependencies to `jakarta.xml.bind-api:4.0.2` and `org.glassfish.jaxb:jaxb-runtime:4.0.5`
-- Added proper package relocation to `org.dynmap.shaded.*` to avoid classpath conflicts
-- Fixed ServiceLoader discovery by using `mergeServiceFiles()` instead of excluding META-INF/services
+- Added JAXB API: `jakarta.xml.bind-api:4.0.2`
+- Added JAXB runtime: `org.glassfish.jaxb:jaxb-runtime:4.0.5`
+- Added required transitive dependencies:
+  - `jakarta.activation-api:2.1.3`
+  - `com.sun.istack:istack-commons-runtime:4.1.2`
+  - `org.glassfish.jaxb:txw2:4.0.5`
+- Configured proper package relocation to `org.dynmap.shaded.*` to avoid classpath conflicts
+- Enabled `mergeServiceFiles()` to preserve META-INF/services for ServiceLoader discovery
 
 This ensures S3 tile read/write operations and zoom-out processing work correctly on modern Java versions.
 
