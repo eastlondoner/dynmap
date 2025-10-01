@@ -57,6 +57,7 @@ processResources
 }
 
 shadowJar {
+    zip64 true
     dependencies {
         include(dependency(':DynmapCore'))
         include(dependency("commons-codec:commons-codec:"))
