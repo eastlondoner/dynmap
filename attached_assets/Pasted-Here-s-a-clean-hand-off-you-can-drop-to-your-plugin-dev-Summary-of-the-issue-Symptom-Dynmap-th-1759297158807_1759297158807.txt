@@ -1,0 +1,124 @@
+Here’s a clean hand-off you can drop to your plugin dev.
+
+Summary of the issue
+	•	Symptom: Dynmap throws during zoom-out processing when using the AWS S3 storage backend:
+	•	jakarta.xml.bind.JAXBException: Implementation of Jakarta XML Binding-API has not been found
+	•	ClassNotFoundException: org.glassfish.jaxb.runtime.v2.ContextFactory
+	•	Why it happens: On modern Java (17/21), JAXB is not in the JDK. The Dynmap S3 client (or a dependency of it) uses Jakarta XML Binding at runtime but the required runtime classes aren’t on the plugin’s classpath.
+	•	Impact: S3 reads/writes fail (e.g., during zoom-out tile aggregation), rendering breaks.
+
+What the developer needs to do
+
+1) Shade the missing Jakarta JAXB runtime into the Dynmap plugin JAR
+
+Include both the API and the runtime and relocate them to avoid classpath collisions with other plugins.
+
+Maven (pom.xml)
+
+<dependencies>
+  <!-- JAXB API & runtime -->
+  <dependency>
+    <groupId>jakarta.xml.bind</groupId>
+    <artifactId>jakarta.xml.bind-api</artifactId>
+    <version>4.0.2</version>
+  </dependency>
+  <dependency>
+    <groupId>org.glassfish.jaxb</groupId>
+    <artifactId>jaxb-runtime</artifactId>
+    <version>4.0.5</version>
+  </dependency>
+  <!-- your other deps: s3lite/aws client, etc. -->
+</dependencies>
+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-shade-plugin</artifactId>
+      <version>3.5.1</version>
+      <executions>
+        <execution>
+          <phase>package</phase>
+          <goals><goal>shade</goal></goals>
+          <configuration>
+            <relocations>
+              <!-- relocate to an internal namespace -->
+              <relocation>
+                <pattern>jakarta.xml.bind</pattern>
+                <shadedPattern>org.dynmap.shaded.jakarta.xml.bind</shadedPattern>
+              </relocation>
+              <relocation>
+                <pattern>org.glassfish.jaxb</pattern>
+                <shadedPattern>org.dynmap.shaded.glassfish.jaxb</shadedPattern>
+              </relocation>
+            </relocations>
+            <!-- Keep service files so JAXB finds ContextFactory via ServiceLoader -->
+            <transformers>
+              <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+              <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"/>
+            </transformers>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
+</build>
+
+Gradle (Kotlin DSL)
+
+dependencies {
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.2")
+    implementation("org.glassfish.jaxb:jaxb-runtime:4.0.5")
+}
+
+tasks.shadowJar {
+    relocate("jakarta.xml.bind", "org.dynmap.shaded.jakarta.xml.bind")
+    relocate("org.glassfish.jaxb", "org.dynmap.shaded.glassfish.jaxb")
+    mergeServiceFiles() // preserves META-INF/services entries
+}
+
+Important:
+	•	Relocation matters: other plugins might bring different JAXB versions; relocating prevents class conflicts.
+	•	mergeServiceFiles/ServicesResourceTransformer is required so ServiceLoader can discover ContextFactory.
+
+2) If using JPMS (module-info.java)
+
+Either:
+	•	Do not include module-info.java in the shaded artifact (simplest for Bukkit/Paper), or
+	•	Add:
+
+requires static jakarta.xml.bind; // if compiling against it
+requires org.glassfish.jaxb.runtime; // if using modules
+
+
+
+But JPMS isn’t typically used in Spigot/Paper plugins—most projects omit module descriptors.
+
+3) Verify at runtime
+	•	Build the shaded JAR.
+	•	Run on Paper/Spigot with Java 17/21.
+	•	Configure storage: type: aws_s3 with valid credentials/bucket.
+	•	Trigger renders and zoom-out processing. Confirm no JAXB exceptions and that tiles read/write fine.
+
+4) Optional: reduce the need for JAXB
+
+Longer-term hardening options:
+	•	Replace JAXB usage in the S3 path with a non-JAXB serializer (e.g., Jackson) or migrate to AWS SDK v2 (which doesn’t require JAXB). That eliminates this class of error entirely.
+	•	Or keep the S3 backend but document the shaded JAXB dependency so future refactors don’t drop it.
+
+Temporary operational workarounds (for the server admin)
+	•	Switch to local storage:
+
+storage:
+  type: filetree
+
+
+	•	Sync tiles to S3/CDN externally (e.g., aws s3 sync or rclone) until a shaded build is available.
+
+Acceptance criteria
+	•	No jakarta.xml.bind.JAXBException or ClassNotFoundException on Java 17/21.
+	•	S3 tile reads/writes succeed; zoom-out processing completes.
+	•	No classpath conflicts reported with other plugins (thanks to relocation).
+	•	Works on both initial render and incremental updates.
+
+If you want, I can also craft a minimal PR patch (pom/gradle + notes) that drops straight into your build.
