@@ -64,7 +64,7 @@ public class AWSS3MapStorage extends MapStorage {
                         exists = true;
             } catch (ServiceException x) {
                 if (!x.getMessage().contains("NoSuchKey") && !x.getMessage().contains("404")) {
-                        Log.severe("AWS Exception", x);
+                        logS3Error("HEAD (exists check)", baseKey, x);
                 }
             } catch (StorageShutdownException x) {
                 
@@ -88,7 +88,7 @@ public class AWSS3MapStorage extends MapStorage {
                         }
             } catch (ServiceException x) {
                 if (!x.getMessage().contains("NoSuchKey") && !x.getMessage().contains("404")) {
-                        Log.severe("AWS Exception", x);
+                        logS3Error("HEAD (hash check)", baseKey, x);
                 }
             } catch (StorageShutdownException x) {
                 
@@ -124,7 +124,7 @@ public class AWSS3MapStorage extends MapStorage {
                         if (x.getMessage().contains("NoSuchKey")) {
                                 return null;
                         }
-                        Log.severe("AWS Exception", x);
+                        logS3Error("GET (tile read)", baseKey, x);
             } catch (StorageShutdownException x) {
                 } finally {
                         releaseConnection(s3);
@@ -152,7 +152,7 @@ public class AWSS3MapStorage extends MapStorage {
                         }
                         done = true;
             } catch (ServiceException x) {
-                Log.severe("AWS Exception", x);
+                logS3Error(encImage == null ? "DELETE (tile)" : "PUT (tile write)", baseKey, x);
             } catch (StorageShutdownException x) {
                 } finally {
                         releaseConnection(s3);
@@ -292,7 +292,7 @@ public class AWSS3MapStorage extends MapStorage {
                         return false;
                 }
         } catch (ServiceException s3x) {
-                Log.severe("AWS Exception", s3x);
+                logS3Error("LIST (bucket initialization)", prefix, s3x);
                 return false;
         } catch (StorageShutdownException x) {
                 return false;
@@ -417,7 +417,7 @@ public class AWSS3MapStorage extends MapStorage {
                 }
         } catch (ServiceException x) {
                 if (!x.getMessage().contains("SignatureDoesNotMatch")) {
-                        Log.severe("AWS Exception", x);
+                        logS3Error("LIST (enumerate tiles)", basekey, x);
                 }
         } catch (StorageShutdownException x) {
         } finally {
@@ -493,7 +493,7 @@ public class AWSS3MapStorage extends MapStorage {
                 }
         } catch (ServiceException x) {
                 if (!x.getMessage().contains("SignatureDoesNotMatch")) {
-                        Log.severe("AWS Exception", x);
+                        logS3Error("LIST/DELETE (purge tiles)", basekey, x);
                 }
         } catch (StorageShutdownException x) {
         } finally {
@@ -539,7 +539,7 @@ public class AWSS3MapStorage extends MapStorage {
                 }
                         done = true;
         } catch (ServiceException x) {
-                Log.severe("AWS Exception", x);
+                logS3Error(encImage == null ? "DELETE (player face)" : "PUT (player face)", baseKey, x);
         } catch (StorageShutdownException x) {
         } finally {
                 releaseConnection(s3);
@@ -559,7 +559,7 @@ public class AWSS3MapStorage extends MapStorage {
             image = new BufferInputStream(imagedata);
         } catch (ServiceException x) {
                 if (!x.getMessage().contains("NoSuchKey")) {
-                        Log.severe("AWS Exception", x);
+                        logS3Error("GET (player face image)", baseKey, x);
                 }
         } catch (StorageShutdownException x) {
         } finally {
@@ -579,7 +579,7 @@ public class AWSS3MapStorage extends MapStorage {
                 exists = true;
         } catch (ServiceException x) {
                 if (!x.getMessage().contains("NoSuchKey") && !x.getMessage().contains("404")) {
-                        Log.severe("AWS Exception", x);
+                        logS3Error("HEAD (player face exists)", baseKey, x);
                 }
         } catch (StorageShutdownException x) {
         } finally {
@@ -607,7 +607,7 @@ public class AWSS3MapStorage extends MapStorage {
                 }
                         done = true;
         } catch (ServiceException x) {
-                Log.severe("AWS Exception", x);
+                logS3Error(encImage == null ? "DELETE (marker image)" : "PUT (marker image)", baseKey, x);
         } catch (StorageShutdownException x) {
         } finally {
                 releaseConnection(s3);
@@ -626,7 +626,7 @@ public class AWSS3MapStorage extends MapStorage {
             image = new BufferInputStream(imagedata);
         } catch (ServiceException x) {
                 if (!x.getMessage().contains("NoSuchKey")) {
-                        Log.severe("AWS Exception", x);
+                        logS3Error("GET (marker image)", baseKey, x);
                 }
         } catch (StorageShutdownException x) {
         } finally {
@@ -654,7 +654,7 @@ public class AWSS3MapStorage extends MapStorage {
                 }
                         done = true;
         } catch (ServiceException x) {
-                Log.severe("AWS Exception", x);
+                logS3Error(content == null ? "DELETE (marker file)" : "PUT (marker file)", baseKey, x);
         } catch (StorageShutdownException x) {
         } finally {
                 releaseConnection(s3);
@@ -771,7 +771,7 @@ public class AWSS3MapStorage extends MapStorage {
                 }
                         done = true;
         } catch (ServiceException x) {
-                Log.severe("AWS Exception", x);
+                logS3Error(content == null ? "DELETE (static file)" : "PUT (static file)", baseKey, x);
         } catch (StorageShutdownException x) {
         } finally {
                 releaseConnection(s3);
@@ -853,5 +853,14 @@ public class AWSS3MapStorage extends MapStorage {
             return matcher.group(1);
         }
         return null;
+    }
+
+    private void logS3Error(String operation, String key, ServiceException e) {
+        String errorMsg = String.format("S3 Error [%s] - Operation: %s, Key: %s, Message: %s", 
+            bucketname, operation, key, e.getMessage());
+        Log.severe(errorMsg);
+        if (e.getCause() != null) {
+            Log.severe("  Caused by: " + e.getCause().getMessage());
+        }
     }
 }
