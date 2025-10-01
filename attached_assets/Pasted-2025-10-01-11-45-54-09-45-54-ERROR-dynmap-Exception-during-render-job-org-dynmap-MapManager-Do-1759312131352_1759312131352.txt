@@ -1,0 +1,36 @@
+2025-10-01 11:45:54 [09:45:54 ERROR]: [dynmap] Exception during render job: org.dynmap.MapManager_DoZoomOutProcessing@30ff8dea
+2025-10-01 11:45:54 [09:45:54 WARN]: java.lang.RuntimeException: org.dynmap.shaded.jakarta.xml.bind.JAXBException: Implementation of Jakarta XML Binding-API has not been found on module path or classpath.
+2025-10-01 11:45:54 [09:45:54 WARN]:  - with linked exception:
+2025-10-01 11:45:54 [09:45:54 WARN]: [java.lang.ClassNotFoundException: org.dynmap.shaded.glassfish.jaxb.runtime.v2.ContextFactory]
+2025-10-01 11:45:54 [09:45:54 WARN]:    at dynmap.jar//org.dynmap.s3lite.core.client.DefaultS3Client.lambda$handleErrorResponse$5(DefaultS3Client.java:206)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at java.base/java.util.Optional.map(Unknown Source)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at dynmap.jar//org.dynmap.s3lite.core.client.DefaultS3Client.handleErrorResponse(DefaultS3Client.java:191)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at dynmap.jar//org.dynmap.s3lite.core.client.DefaultS3Client.getObject(DefaultS3Client.java:126)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at dynmap.jar//org.dynmap.s3lite.api.client.S3Client.getObjectAsBytes(S3Client.java:51)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at dynmap.jar//org.dynmap.storage.aws_s3.AWSS3MapStorage$StorageTile.read(AWSS3MapStorage.java:100)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at dynmap.jar//org.dynmap.DynmapWorld.processZoomFile(DynmapWorld.java:162)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at dynmap.jar//org.dynmap.DynmapWorld.freshenZoomOutFiles(DynmapWorld.java:119)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at dynmap.jar//org.dynmap.MapManager$DoZoomOutProcessing.run(MapManager.java:950)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at dynmap.jar//org.dynmap.MapManager$DynmapScheduledThreadPoolExecutor$2.run(MapManager.java:252)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at java.base/java.util.concurrent.FutureTask.run(Unknown Source)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(Unknown Source)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at java.base/java.lang.Thread.run(Unknown Source)
+2025-10-01 11:45:54 [09:45:54 WARN]: Caused by: org.dynmap.shaded.jakarta.xml.bind.JAXBException: Implementation of Jakarta XML Binding-API has not been found on module path or classpath.
+2025-10-01 11:45:54 [09:45:54 WARN]:  - with linked exception:
+2025-10-01 11:45:54 [09:45:54 WARN]: [java.lang.ClassNotFoundException: org.dynmap.shaded.glassfish.jaxb.runtime.v2.ContextFactory]
+2025-10-01 11:45:54 [09:45:54 WARN]:    at dynmap.jar//org.dynmap.shaded.jakarta.xml.bind.ContextFinder.newInstance(ContextFinder.java:250)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at dynmap.jar//org.dynmap.shaded.jakarta.xml.bind.ContextFinder.newInstance(ContextFinder.java:238)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at dynmap.jar//org.dynmap.shaded.jakarta.xml.bind.ContextFinder.find(ContextFinder.java:386)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at dynmap.jar//org.dynmap.shaded.jakarta.xml.bind.JAXBContext.newInstance(JAXBContext.java:605)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at dynmap.jar//org.dynmap.shaded.jakarta.xml.bind.JAXBContext.newInstance(JAXBContext.java:546)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at dynmap.jar//org.dynmap.s3lite.core.client.DefaultS3Client.lambda$handleErrorResponse$5(DefaultS3Client.java:193)
+2025-10-01 11:45:54 [09:45:54 WARN]:    ... 15 more
+2025-10-01 11:45:54 [09:45:54 WARN]: Caused by: java.lang.ClassNotFoundException: org.dynmap.shaded.glassfish.jaxb.runtime.v2.ContextFactory
+2025-10-01 11:45:54 [09:45:54 WARN]:    at java.base/java.net.URLClassLoader.findClass(Unknown Source)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at java.base/java.lang.ClassLoader.loadClass(Unknown Source)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at java.base/java.lang.ClassLoader.loadClass(Unknown Source)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at dynmap.jar//org.dynmap.shaded.jakarta.xml.bind.ServiceLoaderUtil.nullSafeLoadClass(ServiceLoaderUtil.java:113)
+2025-10-01 11:45:54 [09:45:54 WARN]:    at dynmap.jar//org.dynmap.shaded.jakarta.xml.bind.ServiceLoaderUtil.safeLoadCla
