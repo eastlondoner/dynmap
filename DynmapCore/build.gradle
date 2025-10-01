@@ -55,6 +55,7 @@ jar {
 }
 
 shadowJar {
+    zip64 true
     dependencies {
         include(dependency('com.googlecode.json-simple:json-simple:'))
         include(dependency('org.yaml:snakeyaml:'))
@@ -82,6 +83,12 @@ shadowJar {
         relocate('javax.servlet', 'org.dynmap.javax.servlet' )
         relocate('org.postgresql', 'org.dynmap.org.postgresql')
         relocate('io.github.linktosriram.s3lite', 'org.dynmap.s3lite')
+        relocate('jakarta.xml.bind', 'org.dynmap.shaded.jakarta.xml.bind')
+        relocate('jakarta.activation', 'org.dynmap.shaded.jakarta.activation')
+        relocate('org.glassfish.jaxb', 'org.dynmap.shaded.glassfish.jaxb')
+        relocate('com.sun.xml.bind', 'org.dynmap.shaded.glassfish.jaxb')
+        relocate('com.sun.xml.txw2', 'org.dynmap.shaded.txw2')
+        relocate('com.sun.istack', 'org.dynmap.shaded.istack')
         
     mergeServiceFiles()
         
