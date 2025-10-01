@@ -45,4 +45,4 @@ externalPort = 3001
 [deployment]
 build = ["sh", "-c", "cp target/* public/downloads"]
 deploymentTarget = "static"
-publicDir = "build"
+publicDir = "public"
