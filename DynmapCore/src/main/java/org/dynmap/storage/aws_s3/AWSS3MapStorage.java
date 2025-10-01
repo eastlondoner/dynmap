@@ -1,16 +1,18 @@
 package org.dynmap.storage.aws_s3;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.dynmap.DynmapCore;
 import org.dynmap.DynmapWorld;
@@ -28,22 +30,10 @@ import org.dynmap.storage.MapStorageTileSearchEndCB;
 import org.dynmap.utils.BufferInputStream;
 import org.dynmap.utils.BufferOutputStream;
 
-import io.github.linktosriram.s3lite.api.client.S3Client;
-import io.github.linktosriram.s3lite.api.exception.NoSuchKeyException;
-import io.github.linktosriram.s3lite.api.exception.S3Exception;
-import io.github.linktosriram.s3lite.api.region.Region;
-import io.github.linktosriram.s3lite.api.request.DeleteObjectRequest;
-import io.github.linktosriram.s3lite.api.request.GetObjectRequest;
-import io.github.linktosriram.s3lite.api.request.ListObjectsV2Request;
-import io.github.linktosriram.s3lite.api.request.PutObjectRequest;
-import io.github.linktosriram.s3lite.api.response.GetObjectResponse;
-import io.github.linktosriram.s3lite.api.response.ListObjectsV2Response;
-import io.github.linktosriram.s3lite.api.response.ResponseBytes;
-import io.github.linktosriram.s3lite.api.response.S3Object;
-import io.github.linktosriram.s3lite.core.auth.AwsBasicCredentials;
-import io.github.linktosriram.s3lite.core.client.DefaultS3ClientBuilder;
-import io.github.linktosriram.s3lite.http.spi.request.RequestBody;
-import io.github.linktosriram.s3lite.http.urlconnection.URLConnectionSdkHttpClient;
+import com.github.davidmoten.aws.lw.client.Client;
+import com.github.davidmoten.aws.lw.client.Credentials;
+import com.github.davidmoten.aws.lw.client.Response;
+import com.github.davidmoten.aws.lw.client.ServiceException;
 
 public class AWSS3MapStorage extends MapStorage {
     public class StorageTile extends MapStorageTile {
@@ -67,23 +57,15 @@ public class AWSS3MapStorage extends MapStorage {
         @Override
         public boolean exists() {
                 boolean exists = false;
-                S3Client s3 = null;
+                Client s3 = null;
                 try {
                         s3 = getConnection();
-                        ListObjectsV2Request req = ListObjectsV2Request.builder().bucketName(bucketname).prefix(baseKey).maxKeys(1).build();
-                    ListObjectsV2Response rslt = s3.listObjectsV2(req);
-                        if ((rslt != null) && (rslt.getKeyCount() > 0))
-                                exists = true;
-            } catch (S3Exception x) {
-                if (!x.getCode().equals("SignatureDoesNotMatch")) {     // S3 behavior when no object match....
+                        Response response = s3.path(bucketname + "/" + baseKey).method("HEAD").response();
+                        exists = true;
+            } catch (ServiceException x) {
+                if (!x.getMessage().contains("NoSuchKey") && !x.getMessage().contains("404")) {
                         Log.severe("AWS Exception", x);
                 }
-            } catch (RuntimeException x) {
-                        if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
-                                Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
-                        } else {
-                                throw x;
-                        }
             } catch (StorageShutdownException x) {
                 
                 } finally {
@@ -94,44 +76,55 @@ public class AWSS3MapStorage extends MapStorage {
 
         @Override
         public boolean matchesHashCode(long hash) {
-                return false;
+                boolean matches = false;
+                Client s3 = null;
+                try {
+                        s3 = getConnection();
+                        Response response = s3.path(bucketname + "/" + baseKey).method("HEAD").response();
+                        String v = response.header("x-amz-meta-x-dynmap-hash").orElse(null);
+                        if (v != null) {
+                                long storedHash = Long.parseLong(v, 16);
+                                matches = (storedHash == hash);
+                        }
+            } catch (ServiceException x) {
+                if (!x.getMessage().contains("NoSuchKey") && !x.getMessage().contains("404")) {
+                        Log.severe("AWS Exception", x);
+                }
+            } catch (StorageShutdownException x) {
+                
+                } finally {
+                        releaseConnection(s3);
+                }
+                return matches;
         }
 
         @Override
         public TileRead read() {
-                S3Client s3 = null;
+                Client s3 = null;
                 try {
                         s3 = getConnection();
-                        GetObjectRequest req = GetObjectRequest.builder().bucketName(bucketname).key(baseKey).build();
-                        ResponseBytes<GetObjectResponse> obj = s3.getObjectAsBytes(req);
-                        if (obj != null) {
-                                GetObjectResponse rsp = obj.getResponse();
+                        Response response = s3.path(bucketname + "/" + baseKey).response();
+                        if (response != null) {
                     TileRead tr = new TileRead();
-                    byte[] buf = obj.getBytes();
+                    byte[] buf = response.content();
                     if (buf == null) { return null; }
                         tr.image = new BufferInputStream(buf);
-                    tr.format = ImageEncoding.fromContentType(rsp.getContentType());
-                    Map<String, String> meta = rsp.getMetadata();
-                    String v = meta.get("x-dynmap-hash");
+                    tr.format = ImageEncoding.fromContentType(response.contentType().orElse("application/octet-stream"));
+                    String v = response.header("x-amz-meta-x-dynmap-hash").orElse(null);
                     if (v != null) {
                         tr.hashCode = Long.parseLong(v, 16);
                     }
-                    v = meta.get("x-dynmap-ts");
+                    v = response.header("x-amz-meta-x-dynmap-ts").orElse(null);
                     if (v != null) {
                         tr.lastModified = Long.parseLong(v);
                     }
                     return tr;
                         }
-                } catch (NoSuchKeyException nskx) {
-                        return null;    // Nominal case if it doesn't exist
-            } catch (S3Exception x) {
-                        Log.severe("AWS Exception", x);
-            } catch (RuntimeException x) {
-                        if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
-                                Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
-                        } else {
-                                throw x;
+                } catch (ServiceException x) {
+                        if (x.getMessage().contains("NoSuchKey")) {
+                                return null;
                         }
+                        Log.severe("AWS Exception", x);
             } catch (StorageShutdownException x) {
                 } finally {
                         releaseConnection(s3);
@@ -142,32 +135,28 @@ public class AWSS3MapStorage extends MapStorage {
         @Override
         public boolean write(long hash, BufferOutputStream encImage, long timestamp) {
                 boolean done = false;
-                S3Client s3 = null;
+                Client s3 = null;
                 try {
                 s3 = getConnection();
-                        if (encImage == null) { // Delete?
-                                DeleteObjectRequest req = DeleteObjectRequest.builder().bucketName(bucketname).key(baseKey).build();
-                                s3.deleteObject(req);
+                        if (encImage == null) {
+                                s3.path(bucketname + "/" + baseKey).method("DELETE").execute();
                         }
                         else {
-                            PutObjectRequest req = PutObjectRequest.builder().bucketName(bucketname).key(baseKey).contentType(map.getImageFormat().getEncoding().getContentType())
-                                                .addMetadata("x-dynmap-hash", Long.toHexString(hash)).addMetadata("x-dynmap-ts", Long.toString(timestamp)).build();
-                    s3.putObject(req, RequestBody.fromBytes(Arrays.copyOf(encImage.buf, encImage.len)));
+                    s3.path(bucketname + "/" + baseKey)
+                        .method("PUT")
+                        .header("Content-Type", map.getImageFormat().getEncoding().getContentType())
+                        .header("x-amz-meta-x-dynmap-hash", Long.toHexString(hash))
+                        .header("x-amz-meta-x-dynmap-ts", Long.toString(timestamp))
+                        .requestBody(Arrays.copyOf(encImage.buf, encImage.len))
+                        .execute();
                         }
                         done = true;
-            } catch (S3Exception x) {
+            } catch (ServiceException x) {
                 Log.severe("AWS Exception", x);
-            } catch (RuntimeException x) {
-                        if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
-                                Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
-                        } else {
-                                throw x;
-                        }
             } catch (StorageShutdownException x) {
                 } finally {
                         releaseConnection(s3);
                 }
-            // Signal update for zoom out
             if (zoom == 0) {
                 world.enqueueZoomOutUpdate(this);
             }
@@ -240,14 +229,15 @@ public class AWSS3MapStorage extends MapStorage {
     }
     
     private String bucketname;
-    private Region region;
+    private String region;
     private String access_key_id;
     private String secret_access_key;
     private String prefix;
+    private String endpoint;
 
     private int POOLSIZE = 4;
     private int cpoolCount = 0;
-    private S3Client[] cpool = new S3Client[POOLSIZE];
+    private Client[] cpool = new Client[POOLSIZE];
     
     public AWSS3MapStorage() {
     }
@@ -265,56 +255,45 @@ public class AWSS3MapStorage extends MapStorage {
                 Log.severe("AWS S3 storage is not supported option with loegin support enabled: set login-enabled: false in configuration.txt");
             return false;               
         }
-        // Get our settings
         bucketname = core.configuration.getString("storage/bucketname", "dynmap");
         access_key_id = core.configuration.getString("storage/aws_access_key_id", System.getenv("AWS_ACCESS_KEY_ID"));
         secret_access_key = core.configuration.getString("storage/aws_secret_access_key", System.getenv("AWS_SECRET_ACCESS_KEY"));
         prefix = core.configuration.getString("storage/prefix", "");
 
-        // Either use a custom region, or one of the default AWS regions
         String region_name = core.configuration.getString("storage/region", "us-east-1");
         String region_endpoint = core.configuration.getString("storage/override_endpoint", "");
 
         if (region_endpoint.length() > 0) {
-            region = Region.of(region_name, URI.create(region_endpoint));
+            endpoint = region_endpoint;
+            region = region_name;
         } else {
-            region = Region.fromString(region_name);
+            region = region_name;
+            endpoint = null;
         }
 
         if ((prefix.length() > 0) && (prefix.charAt(prefix.length()-1) != '/')) {
                 prefix += '/';
         }
-        // Now creste the access client for the S3 service
         Log.info("Using AWS S3 storage: web site at S3 bucket " + bucketname + " in region " + region);
-        S3Client s3 = null;
+        Client s3 = null;
         try {
             s3 = getConnection();
             if (s3 == null) {
                 Log.severe("Error creating S3 access client");      
                 return false;
             }
-                // Make sure bucket exists (do list)
-                ListObjectsV2Request listreq = ListObjectsV2Request.builder()
-                                .bucketName(bucketname)
-                                .maxKeys(1)
-                                .prefix(prefix)
-                                .build();
-                ListObjectsV2Response rslt = s3.listObjectsV2(listreq);
-                if (rslt == null) {
+                String response = s3.path(bucketname)
+                        .param("list-type", "2")
+                        .param("prefix", prefix)
+                        .param("max-keys", "1")
+                        .responseAsUtf8();
+                if (response == null || !response.contains("ListBucketResult")) {
                         Log.severe("Error: cannot find or access S3 bucket");
                         return false;
                 }
-                rslt.getContents();
-        } catch (S3Exception s3x) {
+        } catch (ServiceException s3x) {
                 Log.severe("AWS Exception", s3x);
                 return false;
-        } catch (RuntimeException x) {
-                if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
-                        Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
-                        return false;
-                } else {
-                        throw x;
-                }
         } catch (StorageShutdownException x) {
                 return false;
         } finally {
@@ -334,10 +313,9 @@ public class AWSS3MapStorage extends MapStorage {
     public MapStorageTile getTile(DynmapWorld world, String uri) {
         String[] suri = uri.split("/");
         if (suri.length < 2) return null;
-        String mname = suri[0]; // Map URI - might include variant
+        String mname = suri[0];
         MapType mt = null;
         ImageVariant imgvar = null;
-        // Find matching map type and image variant
         for (int mti = 0; (mt == null) && (mti < world.maps.size()); mti++) {
             MapType type = world.maps.get(mti);
             ImageVariant[] var = type.getVariants();
@@ -348,13 +326,12 @@ public class AWSS3MapStorage extends MapStorage {
                 }
             }
         }
-        if (mt == null) {   // Not found?
+        if (mt == null) {
             return null;
         }
-        // Now, take the last section and parse out coordinates and zoom
         String fname = suri[suri.length-1];
         String[] coord = fname.split("[_\\.]");
-        if (coord.length < 3) { // 3 or 4
+        if (coord.length < 3) {
             return null;
         }
         int zoom = 0;
@@ -379,30 +356,33 @@ public class AWSS3MapStorage extends MapStorage {
     private void processEnumMapTiles(DynmapWorld world, MapType map, ImageVariant var, MapStorageTileEnumCB cb, MapStorageBaseTileEnumCB cbBase, 
                 MapStorageTileSearchEndCB cbEnd) {
         String basekey = prefix + "tiles/" + world.getName() + "/" + map.getPrefix() + var.variantSuffix + "/";
-        ListObjectsV2Request req = ListObjectsV2Request.builder().bucketName(bucketname).prefix(basekey).maxKeys(1000).build();
         boolean done = false;
-        S3Client s3 = null;
+        Client s3 = null;
+        String continuationToken = null;
         try {
                 s3 = getConnection();
                 while (!done) {
-                        ListObjectsV2Response result = s3.listObjectsV2(req);
-                        List<S3Object> objects = result.getContents();
-                        for (S3Object os : objects) { 
-                                String key = os.getKey();
-                                key = key.substring(basekey.length());  // Strip off base
-                                // Parse the extension
+                        com.github.davidmoten.aws.lw.client.RequestBuilder builder = s3.path(bucketname)
+                                .param("list-type", "2")
+                                .param("prefix", basekey)
+                                .param("max-keys", "1000");
+                        if (continuationToken != null) {
+                                builder = builder.param("continuation-token", continuationToken);
+                        }
+                        String response = builder.responseAsUtf8();
+                        List<String> keys = parseS3ListResponse(response);
+                        for (String key : keys) { 
+                                key = key.substring(basekey.length());
                         String ext = null;
                         int extoff = key.lastIndexOf('.');
                         if (extoff >= 0) {
                             ext = key.substring(extoff+1);
                             key = key.substring(0, extoff);
                         }
-                        // If not valid image extension, ignore
                         ImageEncoding fmt = ImageEncoding.fromExt(ext);
                         if (fmt == null) {
                             continue;
                         }
-                        // See if zoom tile: figure out zoom level
                         int zoom = 0;
                         if (key.startsWith("z")) {
                             while (key.startsWith("z")) {
@@ -413,13 +393,11 @@ public class AWSS3MapStorage extends MapStorage {
                                 key = key.substring(1);
                             }
                         }
-                        // Split remainder to get coords
                         String[] coord = key.split("_");
-                        if (coord.length == 2) {    // Must be 2 to be a tile
+                        if (coord.length == 2) {
                             try {
                                 int x = Integer.parseInt(coord[0]);
                                 int y = Integer.parseInt(coord[1]);
-                                // Invoke callback
                                 MapStorageTile t = new StorageTile(world, map, x, y, zoom, var);
                                 if(cb != null)
                                     cb.tileFound(t, fmt);
@@ -430,24 +408,16 @@ public class AWSS3MapStorage extends MapStorage {
                             }
                         }
                         }
-                        if (result.isTruncated()) {     // If more, build continuiation request
-                        req = ListObjectsV2Request.builder().bucketName(bucketname)
-                                        .prefix(basekey).delimiter("").maxKeys(1000).continuationToken(result.getNextContinuationToken()).encodingType("url").requestPayer("requester").build();
+                        if (response.contains("<IsTruncated>true</IsTruncated>")) {
+                        continuationToken = extractXmlValue(response, "NextContinuationToken");
                         }
-                        else {  // Else, we're done
+                        else {
                                 done = true;
                         }
                 }
-        } catch (S3Exception x) {
-                if (!x.getCode().equals("SignatureDoesNotMatch")) {     // S3 behavior when no object match....
+        } catch (ServiceException x) {
+                if (!x.getMessage().contains("SignatureDoesNotMatch")) {
                         Log.severe("AWS Exception", x);
-                        Log.severe("req=" + req);
-                }
-        } catch (RuntimeException x) {
-                if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
-                        Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
-                } else {
-                        throw x;
                 }
         } catch (StorageShutdownException x) {
         } finally {
@@ -465,7 +435,7 @@ public class AWSS3MapStorage extends MapStorage {
         if (map != null) {
             mtlist = Collections.singletonList(map);
         }
-        else {  // Else, add all directories under world directory (for maps)
+        else {
             mtlist = new ArrayList<MapType>(world.maps);
         }
         for (MapType mt : mtlist) {
@@ -483,7 +453,7 @@ public class AWSS3MapStorage extends MapStorage {
         if (map != null) {
             mtlist = Collections.singletonList(map);
         }
-        else {  // Else, add all directories under world directory (for maps)
+        else {
             mtlist = new ArrayList<MapType>(world.maps);
         }
         for (MapType mt : mtlist) {
@@ -496,37 +466,34 @@ public class AWSS3MapStorage extends MapStorage {
 
     private void processPurgeMapTiles(DynmapWorld world, MapType map, ImageVariant var) {
         String basekey = prefix + "tiles/" + world.getName() + "/" + map.getPrefix() + var.variantSuffix + "/";
-                ListObjectsV2Request req = ListObjectsV2Request.builder().bucketName(bucketname).prefix(basekey).delimiter("").maxKeys(1000).encodingType("url").requestPayer("requester").build();
-                S3Client s3 = null;
+                Client s3 = null;
+        String continuationToken = null;
         try {
                 s3 = getConnection();
                 boolean done = false;
                 while (!done) {
-                        ListObjectsV2Response result = s3.listObjectsV2(req);
-                        List<S3Object> objects = result.getContents();
-                        for (S3Object os : objects) { 
-                                String key = os.getKey();
-                                DeleteObjectRequest delreq = DeleteObjectRequest.builder().bucketName(bucketname).key(key).build();
-                                s3.deleteObject(delreq);
+                        com.github.davidmoten.aws.lw.client.RequestBuilder builder = s3.path(bucketname)
+                                .param("list-type", "2")
+                                .param("prefix", basekey)
+                                .param("max-keys", "1000");
+                        if (continuationToken != null) {
+                                builder = builder.param("continuation-token", continuationToken);
                         }
-                        if (result.isTruncated()) {     // If more, build continuiation request
-                        req = ListObjectsV2Request.builder().bucketName(bucketname)
-                                        .prefix(basekey).delimiter("").maxKeys(1000).continuationToken(result.getNextContinuationToken()).encodingType("url").requestPayer("requester").build();
+                        String response = builder.responseAsUtf8();
+                        List<String> keys = parseS3ListResponse(response);
+                        for (String key : keys) { 
+                                s3.path(bucketname + "/" + key).method("DELETE").execute();
                         }
-                        else {  // Else, we're done
+                        if (response.contains("<IsTruncated>true</IsTruncated>")) {
+                        continuationToken = extractXmlValue(response, "NextContinuationToken");
+                        }
+                        else {
                                 done = true;
                         }
                 }
-        } catch (S3Exception x) {
-                if (!x.getCode().equals("SignatureDoesNotMatch")) {     // S3 behavior when no object match....
+        } catch (ServiceException x) {
+                if (!x.getMessage().contains("SignatureDoesNotMatch")) {
                         Log.severe("AWS Exception", x);
-                        Log.severe("req=" + req);
-                }
-        } catch (RuntimeException x) {
-                if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
-                        Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
-                } else {
-                        throw x;
                 }
         } catch (StorageShutdownException x) {
         } finally {
@@ -541,7 +508,7 @@ public class AWSS3MapStorage extends MapStorage {
         if (map != null) {
             mtlist = Collections.singletonList(map);
         }
-        else {  // Else, add all directories under world directory (for maps)
+        else {
             mtlist = new ArrayList<MapType>(world.maps);
         }
         for (MapType mt : mtlist) {
@@ -556,27 +523,23 @@ public class AWSS3MapStorage extends MapStorage {
     public boolean setPlayerFaceImage(String playername, FaceType facetype,
             BufferOutputStream encImage) {
         boolean done = false;
-        String baseKey = prefix + "tiles/faces/" + facetype.id + "/" + playername + ".png";
-        S3Client s3 = null;
+        String baseKey = prefix + "faces/" + facetype.id + "/" + playername + ".png";
+        Client s3 = null;
         try {
                 s3 = getConnection();
-                if (encImage == null) { // Delete?
-                                DeleteObjectRequest delreq = DeleteObjectRequest.builder().bucketName(bucketname).key(baseKey).build();
-                            s3.deleteObject(delreq);
+                if (encImage == null) {
+                        s3.path(bucketname + "/" + baseKey).method("DELETE").execute();
                 }
                 else {
-                        PutObjectRequest req = PutObjectRequest.builder().bucketName(bucketname).key(baseKey).contentType("image/png").build();
-                s3.putObject(req, RequestBody.fromBytes(Arrays.copyOf(encImage.buf, encImage.len)));
+            s3.path(bucketname + "/" + baseKey)
+                .method("PUT")
+                .header("Content-Type", "image/png")
+                .requestBody(Arrays.copyOf(encImage.buf, encImage.len))
+                .execute();
                 }
                         done = true;
-        } catch (S3Exception x) {
+        } catch (ServiceException x) {
                 Log.severe("AWS Exception", x);
-        } catch (RuntimeException x) {
-                if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
-                        Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
-                } else {
-                        throw x;
-                }
         } catch (StorageShutdownException x) {
         } finally {
                 releaseConnection(s3);
@@ -587,29 +550,36 @@ public class AWSS3MapStorage extends MapStorage {
     @Override
     public BufferInputStream getPlayerFaceImage(String playername,
             FaceType facetype) {
-        return null;
-    }
-    
-    @Override
-    public boolean hasPlayerFaceImage(String playername, FaceType facetype) {
-        String baseKey = prefix + "tiles/faces/" + facetype.id + "/" + playername + ".png";
-        boolean exists = false;
-        S3Client s3 = null;
+        BufferInputStream image = null;
+        String baseKey = prefix + "faces/" + facetype.id + "/" + playername + ".png";
+        Client s3 = null;
         try {
                 s3 = getConnection();
-                ListObjectsV2Request req = ListObjectsV2Request.builder().bucketName(bucketname).prefix(baseKey).maxKeys(1).build();
-            ListObjectsV2Response rslt = s3.listObjectsV2(req);
-                if ((rslt != null) && (rslt.getKeyCount() > 0))
-                        exists = true;
-        } catch (S3Exception x) {
-                if (!x.getCode().equals("SignatureDoesNotMatch")) {     // S3 behavior when no object match....
+                byte[] imagedata = s3.path(bucketname + "/" + baseKey).responseAsBytes();
+            image = new BufferInputStream(imagedata);
+        } catch (ServiceException x) {
+                if (!x.getMessage().contains("NoSuchKey")) {
                         Log.severe("AWS Exception", x);
                 }
-        } catch (RuntimeException x) {
-                if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
-                        Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
-                } else {
-                        throw x;
+        } catch (StorageShutdownException x) {
+        } finally {
+                releaseConnection(s3);
+        }
+        return image;
+    }
+
+    @Override
+    public boolean hasPlayerFaceImage(String playername, FaceType facetype) {
+        boolean exists = false;
+        String baseKey = prefix + "faces/" + facetype.id + "/" + playername + ".png";
+        Client s3 = null;
+        try {
+                s3 = getConnection();
+                Response response = s3.path(bucketname + "/" + baseKey).method("HEAD").response();
+                exists = true;
+        } catch (ServiceException x) {
+                if (!x.getMessage().contains("NoSuchKey") && !x.getMessage().contains("404")) {
+                        Log.severe("AWS Exception", x);
                 }
         } catch (StorageShutdownException x) {
         } finally {
@@ -622,26 +592,22 @@ public class AWSS3MapStorage extends MapStorage {
     public boolean setMarkerImage(String markerid, BufferOutputStream encImage) {
         boolean done = false;
         String baseKey = prefix + "tiles/_markers_/" + markerid + ".png";
-        S3Client s3 = null;
+        Client s3 = null;
         try {
                 s3 = getConnection();
-                if (encImage == null) { // Delete?
-                                DeleteObjectRequest delreq = DeleteObjectRequest.builder().bucketName(bucketname).key(baseKey).build();
-                            s3.deleteObject(delreq);
+                if (encImage == null) {
+                        s3.path(bucketname + "/" + baseKey).method("DELETE").execute();
                 }
                 else {
-                        PutObjectRequest req = PutObjectRequest.builder().bucketName(bucketname).key(baseKey).contentType("image/png").build();
-                s3.putObject(req, RequestBody.fromBytes(Arrays.copyOf(encImage.buf, encImage.len)));
+            s3.path(bucketname + "/" + baseKey)
+                .method("PUT")
+                .header("Content-Type", "image/png")
+                .requestBody(Arrays.copyOf(encImage.buf, encImage.len))
+                .execute();
                 }
                         done = true;
-        } catch (S3Exception x) {
+        } catch (ServiceException x) {
                 Log.severe("AWS Exception", x);
-        } catch (RuntimeException x) {
-                if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
-                        Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
-                } else {
-                        throw x;
-                }
         } catch (StorageShutdownException x) {
         } finally {
                 releaseConnection(s3);
@@ -651,33 +617,44 @@ public class AWSS3MapStorage extends MapStorage {
 
     @Override
     public BufferInputStream getMarkerImage(String markerid) {
-        return null;
+        BufferInputStream image = null;
+        String baseKey = prefix + "tiles/_markers_/" + markerid + ".png";
+        Client s3 = null;
+        try {
+                s3 = getConnection();
+                byte[] imagedata = s3.path(bucketname + "/" + baseKey).responseAsBytes();
+            image = new BufferInputStream(imagedata);
+        } catch (ServiceException x) {
+                if (!x.getMessage().contains("NoSuchKey")) {
+                        Log.severe("AWS Exception", x);
+                }
+        } catch (StorageShutdownException x) {
+        } finally {
+                releaseConnection(s3);
+        }
+        return image;
     }
 
     @Override
-    public boolean setMarkerFile(String world, String content) {
+    public boolean setMarkerFile(String world, BufferOutputStream content) {
         boolean done = false;
         String baseKey = prefix + "tiles/_markers_/marker_" + world + ".json";
-        S3Client s3 = null;
+        Client s3 = null;
         try {
                 s3 = getConnection();
-                if (content == null) { // Delete?
-                                DeleteObjectRequest delreq = DeleteObjectRequest.builder().bucketName(bucketname).key(baseKey).build();
-                            s3.deleteObject(delreq);
+                if (content == null) {
+                        s3.path(bucketname + "/" + baseKey).method("DELETE").execute();
                 }
                 else {
-                PutObjectRequest req = PutObjectRequest.builder().bucketName(bucketname).key(baseKey).contentType("application/json").build();
-                s3.putObject(req, RequestBody.fromString(content));
+            s3.path(bucketname + "/" + baseKey)
+                .method("PUT")
+                .header("Content-Type", "application/json")
+                .requestBody(Arrays.copyOf(content.buf, content.len))
+                .execute();
                 }
                         done = true;
-        } catch (S3Exception x) {
+        } catch (ServiceException x) {
                 Log.severe("AWS Exception", x);
-        } catch (RuntimeException x) {
-                if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
-                        Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
-                } else {
-                        throw x;
-                }
         } catch (StorageShutdownException x) {
         } finally {
                 releaseConnection(s3);
@@ -691,30 +668,19 @@ public class AWSS3MapStorage extends MapStorage {
     }
     
     @Override
-    // For external web server only
     public String getMarkersURI(boolean login_enabled) {
         return "tiles/";
     }
 
     @Override
-    // For external web server only
     public String getTilesURI(boolean login_enabled) {
         return "tiles/";
     }
     
-    /**
-     * URI to use for loading configuration JSON files (for external web server only)
-     * @param login_enabled - selects based on login security enabled
-     * @return URI
-     */
     public String getConfigurationJSONURI(boolean login_enabled) {
         return "standalone/dynmap_config.json?_={timestamp}";
     }
-    /**
-     * URI to use for loading update JSON files (for external web server only)
-     * @param login_enabled - selects based on login security enabled
-     * @return URI
-     */
+
     public String getUpdateJSONURI(boolean login_enabled) {
         return "standalone/dynmap_{world}.json?_={timestamp}";
     }
@@ -731,7 +697,6 @@ public class AWSS3MapStorage extends MapStorage {
         sb.append(WebAuthManager.esc(p));
         sb.append("\';\n");
         
-        // Need to call base to add webpath
         super.addPaths(sb, core);
     }
 
@@ -742,39 +707,32 @@ public class AWSS3MapStorage extends MapStorage {
     }
 
     
-    // Cache to avoid rewriting same standalong file repeatedly
     private ConcurrentHashMap<String, byte[]> standalone_cache = new ConcurrentHashMap<String, byte[]>();
     
     @Override
     public boolean setStandaloneFile(String fileid, BufferOutputStream content) {
         return setStaticWebFile("standalone/" + fileid, content);
     }
-    // Test if storage needs static web files
+
     public boolean needsStaticWebFiles() {
         return true;
     }
-    /**
-     * Set static web file content
-     * @param fileid - file path
-     * @param content - content for file
-     * @return true if successful
-     */
+
     public boolean setStaticWebFile(String fileid, BufferOutputStream content) {
         
         boolean done = false;
         String baseKey = prefix + fileid;
-        S3Client s3 = null;
+        Client s3 = null;
         try {
                 s3 = getConnection();
                 byte[] cacheval = standalone_cache.get(fileid);
                 
-                if (content == null) { // Delete?
-                        if ((cacheval != null) && (cacheval.length == 0)) {     // Delete cached?
+                if (content == null) {
+                        if ((cacheval != null) && (cacheval.length == 0)) {
                                 return true;
                         }
-                                DeleteObjectRequest delreq = DeleteObjectRequest.builder().bucketName(bucketname).key(baseKey).build();
-                            s3.deleteObject(delreq);
-                            standalone_cache.put(fileid, new byte[0]);  // Mark in cache
+                            s3.path(bucketname + "/" + baseKey).method("DELETE").execute();
+                            standalone_cache.put(fileid, new byte[0]);
                 }
                 else {
                         byte[] digest = content.buf;
@@ -785,7 +743,6 @@ public class AWSS3MapStorage extends MapStorage {
                         } catch (NoSuchAlgorithmException nsax) {
                                 
                         }
-                        // If cached and same, just return
                     if (Arrays.equals(digest, cacheval)) {
                         return true;
                     }
@@ -805,19 +762,16 @@ public class AWSS3MapStorage extends MapStorage {
                         else if (fileid.endsWith(".js")) {
                                 ct = "application/x-javascript";
                         }
-                        PutObjectRequest req = PutObjectRequest.builder().bucketName(bucketname).key(baseKey).contentType(ct).build();
-                s3.putObject(req, RequestBody.fromBytes(Arrays.copyOf(content.buf, content.len)));
+                s3.path(bucketname + "/" + baseKey)
+                    .method("PUT")
+                    .header("Content-Type", ct)
+                    .requestBody(Arrays.copyOf(content.buf, content.len))
+                    .execute();
                         standalone_cache.put(fileid, digest);
                 }
                         done = true;
-        } catch (S3Exception x) {
+        } catch (ServiceException x) {
                 Log.severe("AWS Exception", x);
-        } catch (RuntimeException x) {
-                if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
-                        Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
-                } else {
-                        throw x;
-                }
         } catch (StorageShutdownException x) {
         } finally {
                 releaseConnection(s3);
@@ -825,31 +779,25 @@ public class AWSS3MapStorage extends MapStorage {
         return done;
     }
 
-    private S3Client getConnection() throws S3Exception, StorageShutdownException {
-        S3Client c = null;
+    private Client getConnection() throws ServiceException, StorageShutdownException {
+        Client c = null;
         if (isShutdown) throw new StorageShutdownException();
         synchronized (cpool) {
             while (c == null) {
-                for (int i = 0; i < cpool.length; i++) {    // See if available connection
-                    if (cpool[i] != null) { // Found one
+                for (int i = 0; i < cpool.length; i++) {
+                    if (cpool[i] != null) {
                         c = cpool[i];
                         cpool[i] = null;
                         break;
                     }
                 }
                 if (c == null) {
-                    if (cpoolCount < POOLSIZE) {  // Still more we can have
-                        // Fix classloader context for JAXB ServiceLoader in Spigot/Paper plugins
-                        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-                        try {
-                            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                            c = new DefaultS3ClientBuilder()
-                                        .credentialsProvider(() -> AwsBasicCredentials.create(access_key_id, secret_access_key))
-                                        .region(region)
-                                        .httpClient(URLConnectionSdkHttpClient.create())
-                                        .build();
-                        } finally {
-                            Thread.currentThread().setContextClassLoader(originalClassLoader);
+                    if (cpoolCount < POOLSIZE) {
+                        Credentials credentials = Credentials.create(access_key_id, secret_access_key);
+                        if (endpoint != null) {
+                            c = Client.s3(credentials, region, endpoint);
+                        } else {
+                            c = Client.s3(credentials, region);
                         }
                         if (c == null) {
                                 Log.severe("Error creating S3 access client");      
@@ -870,25 +818,40 @@ public class AWSS3MapStorage extends MapStorage {
         return c;
     }
     
-    private void releaseConnection(S3Client c) {
+    private void releaseConnection(Client c) {
         if (c == null) return;
         synchronized (cpool) {
             for (int i = 0; i < POOLSIZE; i++) {
                 if (cpool[i] == null) {
                     cpool[i] = c;
-                    c = null; // Mark it recovered (no close needed
+                    c = null;
                     cpool.notifyAll();
                     break;
                 }
             }
-            if (c != null) {  // If broken, just toss it
-                try {
-                                        c.close();
-                                } catch (IOException e) {
-                                }
-                cpoolCount--;   // And reduce count
+            if (c != null) {
+                cpoolCount--;
                 cpool.notifyAll();
             }
         }
+    }
+
+    private List<String> parseS3ListResponse(String xml) {
+        List<String> keys = new ArrayList<>();
+        Pattern pattern = Pattern.compile("<Key>(.*?)</Key>");
+        Matcher matcher = pattern.matcher(xml);
+        while (matcher.find()) {
+            keys.add(matcher.group(1));
+        }
+        return keys;
+    }
+
+    private String extractXmlValue(String xml, String tagName) {
+        Pattern pattern = Pattern.compile("<" + tagName + ">(.*?)</" + tagName + ">");
+        Matcher matcher = pattern.matcher(xml);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
     }
 }
