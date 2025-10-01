@@ -789,11 +789,12 @@ public class AWSS3MapStorage extends MapStorage {
                 if (c == null) {
                     if (cpoolCount < POOLSIZE) {
                         if (endpoint != null && endpoint.length() > 0) {
+                            final String customEndpoint = endpoint;
                             c = Client.s3()
                                 .region(region)
                                 .accessKey(access_key_id)
                                 .secretKey(secret_access_key)
-                                .endpoint(endpoint)
+                                .baseUrlFactory((service, reg) -> customEndpoint)
                                 .build();
                         } else {
                             c = Client.s3()
