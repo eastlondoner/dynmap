@@ -1,0 +1,121 @@
+
+Execution failed for task ':DynmapCore:compileJava'.
+> Compilation failed; see the compiler output below.
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:798: error: method s3 in class Client cannot be applied to given types;
+                              c = Client.s3(credentials, region, endpoint);
+                                        ^
+    required: no arguments
+    found:    Credentials,String,String
+    reason: actual and formal argument lists differ in length
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:800: error: method s3 in class Client cannot be applied to given types;
+                              c = Client.s3(credentials, region);
+                                        ^
+    required: no arguments
+    found:    Credentials,String
+    reason: actual and formal argument lists differ in length
+  warning: [options] target value 8 is obsolete and will be removed in a future release
+  Note: Recompile with -Xlint:deprecation for details.
+  warning: [options] source value 8 is obsolete and will be removed in a future release
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:63: error: incompatible types: String cannot be converted to HttpMethod
+                          Response response = s3.path(bucketname + "/" + baseKey).method("HEAD").response();
+                                                                                         ^
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:83: error: incompatible types: String cannot be converted to HttpMethod
+                          Response response = s3.path(bucketname + "/" + baseKey).method("HEAD").response();
+                                                                                         ^
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:142: error: incompatible types: String cannot be converted to HttpMethod
+                                  s3.path(bucketname + "/" + baseKey).method("DELETE").execute();
+                                                                             ^
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:146: error: incompatible types: String cannot be converted to HttpMethod
+                          .method("PUT")
+                                  ^
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:485: error: incompatible types: String cannot be converted to HttpMethod
+                                  s3.path(bucketname + "/" + key).method("DELETE").execute();
+                                                                         ^
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:531: error: incompatible types: String cannot be converted to HttpMethod
+                          s3.path(bucketname + "/" + baseKey).method("DELETE").execute();
+                                                                     ^
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:535: error: incompatible types: String cannot be converted to HttpMethod
+                  .method("PUT")
+                          ^
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:578: error: incompatible types: String cannot be converted to HttpMethod
+                  Response response = s3.path(bucketname + "/" + baseKey).method("HEAD").response();
+                                                                                 ^
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:599: error: incompatible types: String cannot be converted to HttpMethod
+                          s3.path(bucketname + "/" + baseKey).method("DELETE").execute();
+                                                                     ^
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:603: error: incompatible types: String cannot be converted to HttpMethod
+                  .method("PUT")
+                          ^
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:646: error: incompatible types: String cannot be converted to HttpMethod
+                          s3.path(bucketname + "/" + baseKey).method("DELETE").execute();
+                                                                     ^
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:650: error: incompatible types: String cannot be converted to HttpMethod
+                  .method("PUT")
+                          ^
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:734: error: incompatible types: String cannot be converted to HttpMethod
+                              s3.path(bucketname + "/" + baseKey).method("DELETE").execute();
+                                                                         ^
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:766: error: incompatible types: String cannot be converted to HttpMethod
+                      .method("PUT")
+                              ^
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:38: error: AWSS3MapStorage is not abstract and does not override abstract method setMarkerFile(String,String) in MapStorage
+  public class AWSS3MapStorage extends MapStorage {
+         ^
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:365: error: cannot find symbol
+                          com.github.davidmoten.aws.lw.client.RequestBuilder builder = s3.path(bucketname)
+                                                             ^
+    symbol:   class RequestBuilder
+    location: package com.github.davidmoten.aws.lw.client
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:475: error: cannot find symbol
+                          com.github.davidmoten.aws.lw.client.RequestBuilder builder = s3.path(bucketname)
+                                                             ^
+    symbol:   class RequestBuilder
+    location: package com.github.davidmoten.aws.lw.client
+  warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+  Note: Some input files use or override a deprecated API.
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:638: error: method does not override or implement a method from a supertype
+      @Override
+      ^
+  Note: Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:84: error: cannot find symbol
+                          String v = response.header("x-amz-meta-x-dynmap-hash").orElse(null);
+                                             ^
+    symbol:   method header(String)
+    location: variable response of type Response
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:112: error: cannot find symbol
+                      tr.format = ImageEncoding.fromContentType(response.contentType().orElse("application/octet-stream"));
+                                                                        ^
+    symbol:   method contentType()
+    location: variable response of type Response
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:113: error: cannot find symbol
+                      String v = response.header("x-amz-meta-x-dynmap-hash").orElse(null);
+                                         ^
+    symbol:   method header(String)
+    location: variable response of type Response
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:117: error: cannot find symbol
+                      v = response.header("x-amz-meta-x-dynmap-ts").orElse(null);
+                                  ^
+    symbol:   method header(String)
+    location: variable response of type Response
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:286: error: cannot find symbol
+                          .param("list-type", "2")
+                          ^
+    symbol:   method param(String,String)
+    location: class Request
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:366: error: cannot find symbol
+                                  .param("list-type", "2")
+                                  ^
+    symbol:   method param(String,String)
+    location: class Request
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:476: error: cannot find symbol
+                                  .param("list-type", "2")
+                                  ^
+    symbol:   method param(String,String)
+    location: class Request
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:796: error: cannot find symbol
+                          Credentials credentials = Credentials.create(access_key_id, secret_access_key);
+                                                               ^
+    symbol:   method create(String,String)
+    location: interface Credentials
+  28 errors
+  3 warnings
