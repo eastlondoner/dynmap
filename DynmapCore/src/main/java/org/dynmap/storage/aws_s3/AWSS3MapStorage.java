@@ -78,6 +78,12 @@ public class AWSS3MapStorage extends MapStorage {
                 if (!x.getCode().equals("SignatureDoesNotMatch")) {     // S3 behavior when no object match....
                         Log.severe("AWS Exception", x);
                 }
+            } catch (RuntimeException x) {
+                        if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
+                                Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
+                        } else {
+                                throw x;
+                        }
             } catch (StorageShutdownException x) {
                 
                 } finally {
@@ -120,6 +126,12 @@ public class AWSS3MapStorage extends MapStorage {
                         return null;    // Nominal case if it doesn't exist
             } catch (S3Exception x) {
                         Log.severe("AWS Exception", x);
+            } catch (RuntimeException x) {
+                        if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
+                                Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
+                        } else {
+                                throw x;
+                        }
             } catch (StorageShutdownException x) {
                 } finally {
                         releaseConnection(s3);
@@ -145,6 +157,12 @@ public class AWSS3MapStorage extends MapStorage {
                         done = true;
             } catch (S3Exception x) {
                 Log.severe("AWS Exception", x);
+            } catch (RuntimeException x) {
+                        if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
+                                Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
+                        } else {
+                                throw x;
+                        }
             } catch (StorageShutdownException x) {
                 } finally {
                         releaseConnection(s3);
@@ -290,6 +308,13 @@ public class AWSS3MapStorage extends MapStorage {
         } catch (S3Exception s3x) {
                 Log.severe("AWS Exception", s3x);
                 return false;
+        } catch (RuntimeException x) {
+                if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
+                        Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
+                        return false;
+                } else {
+                        throw x;
+                }
         } catch (StorageShutdownException x) {
                 return false;
         } finally {
@@ -418,6 +443,12 @@ public class AWSS3MapStorage extends MapStorage {
                         Log.severe("AWS Exception", x);
                         Log.severe("req=" + req);
                 }
+        } catch (RuntimeException x) {
+                if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
+                        Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
+                } else {
+                        throw x;
+                }
         } catch (StorageShutdownException x) {
         } finally {
                 releaseConnection(s3);
@@ -491,6 +522,12 @@ public class AWSS3MapStorage extends MapStorage {
                         Log.severe("AWS Exception", x);
                         Log.severe("req=" + req);
                 }
+        } catch (RuntimeException x) {
+                if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
+                        Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
+                } else {
+                        throw x;
+                }
         } catch (StorageShutdownException x) {
         } finally {
                 releaseConnection(s3);
@@ -534,6 +571,12 @@ public class AWSS3MapStorage extends MapStorage {
                         done = true;
         } catch (S3Exception x) {
                 Log.severe("AWS Exception", x);
+        } catch (RuntimeException x) {
+                if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
+                        Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
+                } else {
+                        throw x;
+                }
         } catch (StorageShutdownException x) {
         } finally {
                 releaseConnection(s3);
@@ -562,6 +605,12 @@ public class AWSS3MapStorage extends MapStorage {
                 if (!x.getCode().equals("SignatureDoesNotMatch")) {     // S3 behavior when no object match....
                         Log.severe("AWS Exception", x);
                 }
+        } catch (RuntimeException x) {
+                if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
+                        Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
+                } else {
+                        throw x;
+                }
         } catch (StorageShutdownException x) {
         } finally {
                 releaseConnection(s3);
@@ -587,6 +636,12 @@ public class AWSS3MapStorage extends MapStorage {
                         done = true;
         } catch (S3Exception x) {
                 Log.severe("AWS Exception", x);
+        } catch (RuntimeException x) {
+                if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
+                        Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
+                } else {
+                        throw x;
+                }
         } catch (StorageShutdownException x) {
         } finally {
                 releaseConnection(s3);
@@ -617,6 +672,12 @@ public class AWSS3MapStorage extends MapStorage {
                         done = true;
         } catch (S3Exception x) {
                 Log.severe("AWS Exception", x);
+        } catch (RuntimeException x) {
+                if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
+                        Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
+                } else {
+                        throw x;
+                }
         } catch (StorageShutdownException x) {
         } finally {
                 releaseConnection(s3);
@@ -751,6 +812,12 @@ public class AWSS3MapStorage extends MapStorage {
                         done = true;
         } catch (S3Exception x) {
                 Log.severe("AWS Exception", x);
+        } catch (RuntimeException x) {
+                if (x.getMessage() != null && x.getMessage().contains("JAXBException")) {
+                        Log.severe("S3 error response parsing failed (JAXB unavailable): " + x.getMessage());
+                } else {
+                        throw x;
+                }
         } catch (StorageShutdownException x) {
         } finally {
                 releaseConnection(s3);
