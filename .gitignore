@@ -38,3 +38,18 @@
 /fabric-1.16.2_client.launch
 /fabric-1.16.2_server.launch
 
+# Gradle wrapper
+gradle-wrapper.jar
+.gradletasknamecache
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+ENV/
+
+# Build output log
+build-output.log
