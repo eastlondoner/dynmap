@@ -27,6 +27,18 @@ To build the latest plugin versions:
 
 Note: Building requires JDK 21 for latest versions. Built JARs appear in the `target/` directory.
 
+### Recent Updates
+
+**JAXB Fix for AWS S3 Storage (January 2025)**
+
+Fixed a critical issue where Dynmap would throw `jakarta.xml.bind.JAXBException` when using the AWS S3 storage backend on Java 17/21. The fix includes:
+
+- Updated JAXB dependencies to `jakarta.xml.bind-api:4.0.2` and `org.glassfish.jaxb:jaxb-runtime:4.0.5`
+- Added proper package relocation to `org.dynmap.shaded.*` to avoid classpath conflicts
+- Fixed ServiceLoader discovery by using `mergeServiceFiles()` instead of excluding META-INF/services
+
+This ensures S3 tile read/write operations and zoom-out processing work correctly on modern Java versions.
+
 ## Overview
 
 Dynmap is a plugin/mod system that generates real-time, Google Maps-style web maps for Minecraft servers. It renders 3D maps of Minecraft worlds with various perspectives and lighting options, supporting multiple server platforms including Spigot, Paper, and Fabric across different Minecraft versions (1.14.4 through 1.21.x).
