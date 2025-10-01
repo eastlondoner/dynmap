@@ -1,0 +1,37 @@
+* What went wrong:
+Execution failed for task ':DynmapCore:compileJava'.
+> Compilation failed; see the compiler output below.
+  warning: [options] target value 8 is obsolete and will be removed in a future release
+  Note: Recompile with -Xlint:deprecation for details.
+  warning: [options] source value 8 is obsolete and will be removed in a future release
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:795: error: incompatible types: Builder4 cannot be converted to Builder
+                              .secretKey(secret_access_key);
+                                        ^
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:842: error: incompatible types: List<String> cannot be converted to String
+              return response.headers().get(headerName);
+                                           ^
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:38: error: AWSS3MapStorage is not abstract and does not override abstract method setMarkerFile(String,String) in MapStorage
+  public class AWSS3MapStorage extends MapStorage {
+         ^
+  warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+  Note: Some input files use or override a deprecated API.
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:634: error: method does not override or implement a method from a supertype
+      @Override
+      ^
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:109: error: cannot find symbol
+                      byte[] buf = response.contentBytes();
+                                           ^
+    symbol:   method contentBytes()
+    location: variable response of type Response
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:798: error: cannot find symbol
+                              builder = builder.baseUrlFactory((service, reg) -> endpoint);
+                                               ^
+    symbol:   method baseUrlFactory((service,r[...]point)
+    location: variable builder of type Builder
+  /home/runner/workspace/DynmapCore/src/main/java/org/dynmap/storage/aws_s3/AWSS3MapStorage.java:801: error: cannot find symbol
+                          c = builder.build();
+                                     ^
+    symbol:   method build()
+    location: variable builder of type Builder
+  7 errors
+  3 warnings

@@ -103,11 +103,10 @@ public class AWSS3MapStorage extends MapStorage {
                 Client s3 = null;
                 try {
                         s3 = getConnection();
+                        byte[] buf = s3.path(bucketname, baseKey).responseAsBytes();
                         Response response = s3.path(bucketname, baseKey).response();
-                        if (response != null && response.isOk()) {
+                        if (buf != null && response != null && response.isOk()) {
                     TileRead tr = new TileRead();
-                    byte[] buf = response.contentBytes();
-                    if (buf == null) { return null; }
                         tr.image = new BufferInputStream(buf);
                     String ct = getResponseHeader(response, "Content-Type");
                     tr.format = ImageEncoding.fromContentType(ct != null ? ct : "application/octet-stream");
@@ -632,7 +631,7 @@ public class AWSS3MapStorage extends MapStorage {
     }
 
     @Override
-    public boolean setMarkerFile(String world, BufferOutputStream content) {
+    public boolean setMarkerFile(String world, String content) {
         boolean done = false;
         String baseKey = prefix + "tiles/_markers_/marker_" + world + ".json";
         Client s3 = null;
@@ -645,7 +644,7 @@ public class AWSS3MapStorage extends MapStorage {
             s3.path(bucketname, baseKey)
                 .method(HttpMethod.PUT)
                 .header("Content-Type", "application/json")
-                .requestBody(Arrays.copyOf(content.buf, content.len))
+                .requestBody(content.getBytes(StandardCharsets.UTF_8))
                 .execute();
                 }
                         done = true;
@@ -789,16 +788,20 @@ public class AWSS3MapStorage extends MapStorage {
                 }
                 if (c == null) {
                     if (cpoolCount < POOLSIZE) {
-                        com.github.davidmoten.aws.lw.client.Client.Builder builder = Client.s3()
-                            .region(region)
-                            .accessKey(access_key_id)
-                            .secretKey(secret_access_key);
-                        
-                        if (endpoint != null) {
-                            builder = builder.baseUrlFactory((service, reg) -> endpoint);
+                        if (endpoint != null && endpoint.length() > 0) {
+                            c = Client.s3()
+                                .region(region)
+                                .accessKey(access_key_id)
+                                .secretKey(secret_access_key)
+                                .endpoint(endpoint)
+                                .build();
+                        } else {
+                            c = Client.s3()
+                                .region(region)
+                                .accessKey(access_key_id)
+                                .secretKey(secret_access_key)
+                                .build();
                         }
-                        
-                        c = builder.build();
                         
                         if (c == null) {
                                 Log.severe("Error creating S3 access client");      
@@ -839,7 +842,11 @@ public class AWSS3MapStorage extends MapStorage {
 
     private String getResponseHeader(Response response, String headerName) {
         try {
-            return response.headers().get(headerName);
+            List<String> values = response.headers().get(headerName);
+            if (values != null && !values.isEmpty()) {
+                return values.get(0);
+            }
+            return null;
         } catch (Exception e) {
             return null;
         }
