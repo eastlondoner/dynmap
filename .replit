@@ -1,9 +1,10 @@
-modules = ["java-graalvm22.3", "nodejs-20", "php-8.2", "web", "python-3.11"]
+modules = ["java-graalvm25.0", "nodejs-20", "php-8.2", "web", "python-3.11"]
 [agent]
 expertMode = true
 
 [nix]
 channel = "stable-25_05"
+packages = ["graalvmPackages.graalvm-ce"]
 
 [workflows]
 runButton = "Project"
