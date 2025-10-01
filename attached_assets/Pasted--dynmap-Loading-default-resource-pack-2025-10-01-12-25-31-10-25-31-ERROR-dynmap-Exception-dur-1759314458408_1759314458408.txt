@@ -1,0 +1,21 @@
+ [dynmap] Loading default resource pack
+2025-10-01 12:25:31 [10:25:31 ERROR]: [dynmap] Exception during render job: org.dynmap.MapManager_DoZoomOutProcessing@4d55b1d0
+2025-10-01 12:25:31 [10:25:31 WARN]: java.lang.RuntimeException: org.dynmap.shaded.jakarta.xml.bind.JAXBException: Implementation of Jakarta XML Binding-API has not been found on module path or classpath.
+2025-10-01 12:25:31 [10:25:31 WARN]:  - with linked exception:
+2025-10-01 12:25:31 [10:25:31 WARN]: [java.lang.ClassNotFoundException: org.dynmap.shaded.glassfish.jaxb.runtime.v2.ContextFactory]
+2025-10-01 12:25:31 [10:25:31 WARN]:    at dynmap.jar//org.dynmap.s3lite.core.client.DefaultS3Client.lambda$handleErrorResponse$5(DefaultS3Client.java:206)
+2025-10-01 12:25:31 [10:25:31 WARN]:    at java.base/java.util.Optional.map(Unknown Source)
+2025-10-01 12:25:31 [10:25:31 WARN]:    at dynmap.jar//org.dynmap.s3lite.core.client.DefaultS3Client.handleErrorResponse(DefaultS3Client.java:191)
+2025-10-01 12:25:31 [10:25:31 WARN]:    at dynmap.jar//org.dynmap.s3lite.core.client.DefaultS3Client.getObject(DefaultS3Client.java:126)
+2025-10-01 12:25:31 [10:25:31 WARN]:    at dynmap.jar//org.dynmap.s3lite.api.client.S3Client.getObjectAsBytes(S3Client.java:51)
+2025-10-01 12:25:31 [10:25:31 WARN]:    at dynmap.jar//org.dynmap.storage.aws_s3.AWSS3MapStorage$StorageTile.read(AWSS3MapStorage.java:100)
+2025-10-01 12:25:31 [10:25:31 WARN]:    at dynmap.jar//org.dynmap.DynmapWorld.processZoomFile(DynmapWorld.java:162)
+2025-10-01 12:25:31 [10:25:31 WARN]:    at dynmap.jar//org.dynmap.DynmapWorld.freshenZoomOutFiles(DynmapWorld.java:119)
+2025-10-01 12:25:31 [10:25:31 WARN]:    at dynmap.jar//org.dynmap.MapManager$DoZoomOutProcessing.run(MapManager.java:950)
+2025-10-01 12:25:31 [10:25:31 WARN]:    at dynmap.jar//org.dynmap.MapManager$DynmapScheduledThreadPoolExecutor$2.run(MapManager.java:252)
+2025-10-01 12:25:31 [10:25:31 WARN]:    at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)
+2025-10-01 12:25:31 [10:25:31 WARN]:    at java.base/java.util.concurrent.FutureTask.run(Unknown Source)
+2025-10-01 12:25:31 [10:25:31 WARN]:    at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(Unknown Source)
+2025-10-01 12:25:31 [10:25:31 WARN]:    at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+2025-10-01 12:25:31 [10:25:31 WARN]:    at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+2025-10-01 12:25:31 [10:25:31 WARN]:    at java.base/java.lang.Thread.run(Unknown Source)
