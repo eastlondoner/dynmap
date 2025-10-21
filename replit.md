@@ -8,9 +8,7 @@ This Replit environment hosts a **Download Portal** for Dynmap plugin builds. Th
 
 - **Web Server**: Python 3 HTTP server (`server.py`) running on port 5000
 - **Download Portal**: Static website (`public/index.html`) listing available Dynmap builds for:
-  - Spigot/PaperMC (Minecraft 1.10.2 - 1.21.4)
-  - Fabric (Minecraft 1.14.4 - 1.21.6)
-  - Forge (Minecraft 1.12.2 - 1.21.6)
+  - Spigot/PaperMC (Minecraft 1.21.7, 1.21.8, 1.21.10)
 
 ### File Structure
 
@@ -20,14 +18,32 @@ This Replit environment hosts a **Download Portal** for Dynmap plugin builds. Th
 
 ### Building Plugins Locally
 
-To build the latest plugin versions:
+To build the Spigot/PaperMC plugin versions:
 ```bash
-./gradlew :spigot:build :fabric-1.21.6:build :forge-1.21.6:build
+./gradlew :spigot:build
 ```
 
-Note: Building requires JDK 21 for latest versions. Built JARs appear in the `target/` directory.
+Note: Building requires JDK 17 or higher. Built JARs appear in the `target/` directory.
+
+### Supported Versions
+
+This build configuration is optimized to build **only** Spigot/PaperMC versions for:
+- Minecraft 1.21.7
+- Minecraft 1.21.8
+- Minecraft 1.21.10
+
+Fabric and Forge builds have been removed from this configuration.
 
 ### Recent Updates
+
+**October 2025: Configured for Minecraft 1.21.7, 1.21.8, and 1.21.10**
+
+The build system has been streamlined to support only three specific Minecraft versions:
+- Created `bukkit-helper-121-7` for Minecraft 1.21.7 (uses NMS v1_21_R6)
+- Created `bukkit-helper-121-8` for Minecraft 1.21.8 (uses NMS v1_21_R7)
+- Created `bukkit-helper-121-10` for Minecraft 1.21.10 (uses NMS v1_21_R9)
+- Removed all other version helpers and Fabric/Forge modules from the build
+- Updated download portal to show only these three versions
 
 **AWS S3 Library Migration (October 2025)**
 
@@ -63,7 +79,7 @@ This ensures S3 tile read/write operations and zoom-out processing work correctl
 
 ## Overview
 
-Dynmap is a plugin/mod system that generates real-time, Google Maps-style web maps for Minecraft servers. It renders 3D maps of Minecraft worlds with various perspectives and lighting options, supporting multiple server platforms including Spigot, Paper, and Fabric across different Minecraft versions (1.14.4 through 1.21.x).
+Dynmap is a plugin/mod system that generates real-time, Google Maps-style web maps for Minecraft servers. It renders 3D maps of Minecraft worlds with various perspectives and lighting options. This build is configured specifically for Spigot/PaperMC servers running Minecraft 1.21.7, 1.21.8, or 1.21.10.
 
 The project follows a multi-platform architecture with a shared core library (DynmapCore) and platform-specific implementations for different Minecraft server types and versions.
 
@@ -75,12 +91,12 @@ Preferred communication style: Simple, everyday language.
 
 ### Multi-Platform Plugin Architecture
 
-**Purpose**: Support Dynmap across numerous Minecraft versions and server platforms while maintaining a single codebase.
+**Purpose**: Support Dynmap across multiple Minecraft versions while maintaining a single codebase.
 
 **Implementation**: 
 - Shared core library (`DynmapCore`) containing platform-agnostic map rendering logic
-- Platform-specific modules for each Minecraft version (fabric-1.14.4, fabric-1.15.2, fabric-1.16.4, etc., and forge versions)
-- Version-specific mixins for deep integration with Minecraft internals
+- Platform-specific modules for each Minecraft version (bukkit-helper-121-7, bukkit-helper-121-8, bukkit-helper-121-10)
+- Version-specific NMS (Native Minecraft Server) mappings for deep integration with Minecraft internals
 
 **Rationale**: This architecture allows code reuse while accommodating breaking changes between Minecraft versions. Each platform module can hook into version-specific APIs without affecting the core rendering engine.
 
@@ -126,44 +142,28 @@ Preferred communication style: Simple, everyday language.
 
 **Design Choice**: Dual-mode operation (internal vs. external server) provides flexibility - internal server simplifies deployment, external server allows CDN integration and better performance at scale.
 
-### Mixin-Based Platform Integration
-
-**Purpose**: Deep integration with Minecraft internals without modifying game code.
-
-**Implementation**:
-- Fabric Mixin framework for bytecode manipulation
-- Version-specific mixins targeting chunk loading, player management, and world events
-- Accessor mixins for reading protected/private game data
-
-**Rationale**: Mixins allow Dynmap to hook into Minecraft's internal events (chunk generation, player movement) without conflicts or version-specific bytecode patches. This is cleaner than reflection and more maintainable than ASM manipulation.
-
 ### Build System
 
-**Purpose**: Compile and package Dynmap for all supported platforms.
+**Purpose**: Compile and package Dynmap for supported platforms.
 
 **Implementation**:
-- Gradle 8.7 for modern versions
-- Separate "oldgradle" directory for legacy Forge 1.12.2 (requires JDK 8)
+- Gradle 8.7 build system
 - Multi-module project structure with platform-specific submodules
-- Version-specific Java compatibility (JDK 8 for old versions, up to JDK 21 for latest)
+- Java 17 compatibility for modern Minecraft versions
+- Version-specific bukkit-helper modules for NMS integration
 
-**Rationale**: Different Minecraft versions require different Java versions and build tools. The split build system accommodates these requirements while maintaining a unified codebase.
+**Rationale**: Different Minecraft versions require different NMS mappings. The modular build system allows targeting specific versions while maintaining a unified codebase.
 
 ## External Dependencies
 
 ### Core Framework
 - **Gradle v8.7**: Build automation and dependency management
-- **Java 8-21**: Version-specific JDK requirements based on Minecraft version
+- **Java 17+**: Required for modern Minecraft versions
 
 ### Platform Integration
-- **Fabric Loader**: Mod loading framework for Fabric-based versions
-- **Fabric API**: Standard API layer for Fabric mods
-- **Fabric Mixin**: Bytecode manipulation framework for deep game integration
-
-### Minecraft Compatibility
-- **Spigot/PaperMC**: Server platforms for versions ≤1.21.4
-- **Fabric**: Client/server mod platform for versions 1.14.4 through 1.21.x
-- **Forge**: Server platform for legacy versions (1.12.2, 1.14.4, 1.15.2, 1.16.5)
+- **Spigot/PaperMC**: Server platforms for versions 1.21.7, 1.21.8, 1.21.10
+- **Spigot API**: Official API for Bukkit-based servers
+- **NMS (Native Minecraft Server)**: Direct server implementation access for performance-critical operations
 
 ### Database Support (Optional)
 - **SQLite**: Embedded database for map storage
@@ -179,6 +179,6 @@ Preferred communication style: Simple, everyday language.
 - Internal Java-based web server for production deployment
 
 ### Texture and Resource Processing
-- Minecraft asset files (textures, colormaps) from multiple game versions
+- Minecraft asset files (textures, colormaps) from supported game versions
 - Biome color mapping files for realistic terrain rendering
 - Entity texture files for player/mob rendering on maps

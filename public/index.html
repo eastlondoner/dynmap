@@ -179,37 +179,37 @@
             </div>
             
             <div class="download-section">
-                <h2>Choose Your Server Platform</h2>
+                <h2>Spigot / PaperMC Versions</h2>
                 
                 <div class="platform-grid">
                     <div class="platform-card">
-                        <h3>Spigot / PaperMC</h3>
-                        <div class="version">Version 3.7-beta-11</div>
+                        <h3>Minecraft 1.21.7</h3>
+                        <div class="version">Version 3.7-beta-11 for Spigot/PaperMC</div>
                         <div class="description">
-                            Perfect for Spigot, PaperMC, and compatible server implementations. The most widely used version with full feature support.
+                            Perfect for Spigot, PaperMC, and compatible server implementations running Minecraft 1.21.7.
                         </div>
                         <a href="downloads/Dynmap-3.7-beta-11-spigot.jar" class="download-btn" download>Download (11 MB)</a>
                         <p style="margin-top: 10px; font-size: 0.85em; color: #7f8c8d;"><a href="downloads/Dynmap-3.7-beta-11-spigot.jar.MD5" style="color: #3498db;">MD5 Checksum</a></p>
                     </div>
                     
                     <div class="platform-card">
-                        <h3>Fabric</h3>
-                        <div class="version">Version 3.7-beta-11 (Minecraft 1.21.6)</div>
+                        <h3>Minecraft 1.21.8</h3>
+                        <div class="version">Version 3.7-beta-11 for Spigot/PaperMC</div>
                         <div class="description">
-                            For Fabric mod loader servers. Lightweight and modular, perfect for modded Minecraft servers running Fabric.
+                            Perfect for Spigot, PaperMC, and compatible server implementations running Minecraft 1.21.8.
                         </div>
-                        <a href="downloads/Dynmap-3.7-beta-11-fabric-1.21.6.jar" class="download-btn" download>Download (12 MB)</a>
-                        <p style="margin-top: 10px; font-size: 0.85em; color: #7f8c8d;"><a href="downloads/Dynmap-3.7-beta-11-fabric-1.21.6.jar.MD5" style="color: #3498db;">MD5 Checksum</a></p>
+                        <a href="downloads/Dynmap-3.7-beta-11-spigot.jar" class="download-btn" download>Download (11 MB)</a>
+                        <p style="margin-top: 10px; font-size: 0.85em; color: #7f8c8d;"><a href="downloads/Dynmap-3.7-beta-11-spigot.jar.MD5" style="color: #3498db;">MD5 Checksum</a></p>
                     </div>
                     
                     <div class="platform-card">
-                        <h3>Forge</h3>
-                        <div class="version">Version 3.7-beta-11 (Minecraft 1.21.6)</div>
+                        <h3>Minecraft 1.21.10</h3>
+                        <div class="version">Version 3.7-beta-11 for Spigot/PaperMC</div>
                         <div class="description">
-                            For Forge mod loader servers. Full integration with Forge's modding ecosystem and compatible with other Forge mods.
+                            Perfect for Spigot, PaperMC, and compatible server implementations running Minecraft 1.21.10.
                         </div>
-                        <a href="downloads/Dynmap-3.7-beta-11-forge-1.21.6.jar" class="download-btn" download>Download (12 MB)</a>
-                        <p style="margin-top: 10px; font-size: 0.85em; color: #7f8c8d;"><a href="downloads/Dynmap-3.7-beta-11-forge-1.21.6.jar.MD5" style="color: #3498db;">MD5 Checksum</a></p>
+                        <a href="downloads/Dynmap-3.7-beta-11-spigot.jar" class="download-btn" download>Download (11 MB)</a>
+                        <p style="margin-top: 10px; font-size: 0.85em; color: #7f8c8d;"><a href="downloads/Dynmap-3.7-beta-11-spigot.jar.MD5" style="color: #3498db;">MD5 Checksum</a></p>
                     </div>
                 </div>
             </div>
@@ -240,16 +240,15 @@
             
             <div class="build-info">
                 <h3>Building from Source</h3>
-                <p><strong>⚠️ Important Update:</strong> This repository includes a critical JAXB fix for AWS S3 storage backend compatibility with Java 17/21. If you use S3 storage, build from this source to avoid <code>JAXBException</code> errors.</p>
+                <p>This repository builds Dynmap specifically for Minecraft 1.21.7, 1.21.8, and 1.21.10 (Spigot/PaperMC only).</p>
                 <p style="margin-top: 10px;">To build Dynmap from source code, you'll need:</p>
                 <ul style="margin: 10px 0 10px 20px; color: #856404;">
-                    <li>JDK 21 (for Minecraft 1.20.5+ support)</li>
+                    <li>JDK 17 or higher</li>
                     <li>Gradle 8.7+</li>
                 </ul>
-                <p>Run the following command to build all platforms:</p>
+                <p>Run the following command to build:</p>
                 <p style="margin-top: 10px;"><code>./gradlew setup build</code></p>
                 <p style="margin-top: 10px;">Built JARs will be placed in the <code>target/</code> directory.</p>
-                <p style="margin-top: 15px;"><strong>Latest Fix:</strong> JAXB dependencies for S3 storage have been updated and properly shaded to prevent classpath conflicts on modern Java versions.</p>
             </div>
         </div>
         
