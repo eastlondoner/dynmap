@@ -34,6 +34,14 @@ waitForPort = 5000
 localPort = 5000
 externalPort = 80
 
+[[ports]]
+localPort = 35997
+externalPort = 3000
+
+[[ports]]
+localPort = 42705
+externalPort = 3001
+
 [deployment]
 build = ["sh", "-c", "./gradlew :spigot:build :fabric-1.21.6:build :forge-1.21.6:build && cp target/* public/downloads"]
 deploymentTarget = "static"
