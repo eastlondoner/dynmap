@@ -101,7 +101,7 @@ public class BukkitVersionHelperSpigot121_10 extends BukkitVersionHelper {
 
 	private static IRegistry<BiomeBase> getBiomeReg() {
 		if (reg == null) {
-			reg = MinecraftServer.getServer().ba().f(Registries.aK);
+			reg = MinecraftServer.getServer().bg().f(Registries.aN);
 		}
 		return reg;
 	}
@@ -326,32 +326,32 @@ public class BukkitVersionHelperSpigot121_10 extends BukkitVersionHelper {
 
 	@Override
 	public Map<?, ?> getTileEntitiesForChunk(Chunk c) {
-		return ((CraftChunk)c).getHandle(ChunkStatus.n).k; // ChunkStatus.FULL ; IChunkAccess.blockEntities
+		return ((CraftChunk)c).getHandle(ChunkStatus.n).j; // ChunkStatus.FULL ; IChunkAccess.blockEntities
 	}
 
 	@Override
 	public int getTileEntityX(Object te) {
 		TileEntity tileent = (TileEntity) te;
-		return tileent.aA_().u(); // TileEntity.getBlockPos ; Vec3i.getX
+		return tileent.aD_().u(); // TileEntity.getBlockPos ; Vec3i.getX
 	}
 
 	@Override
 	public int getTileEntityY(Object te) {
 		TileEntity tileent = (TileEntity) te;
-		return tileent.aA_().v(); // TileEntity.getBlockPos ; Vec3i.getY
+		return tileent.aD_().v(); // TileEntity.getBlockPos ; Vec3i.getY
 	}
 
 	@Override
 	public int getTileEntityZ(Object te) {
 		TileEntity tileent = (TileEntity) te;
-		return tileent.aA_().w(); // TileEntity.getBlockPos ; Vec3i.getZ
+		return tileent.aD_().w(); // TileEntity.getBlockPos ; Vec3i.getZ
 	}
 
 	@Override
 	public Object readTileEntityNBT(Object te, World w) {
 		TileEntity tileent = (TileEntity) te;
 		CraftWorld cw = (CraftWorld) w;
-		return tileent.d(cw.getHandle().K_()); // TileEntity.saveCustomOnly ; LevelReader.registryAccess
+		return tileent.d(cw.getHandle().L_()); // TileEntity.saveCustomOnly ; LevelReader.registryAccess
 	}
 
 	@Override
@@ -412,7 +412,7 @@ public class BukkitVersionHelperSpigot121_10 extends BukkitVersionHelper {
 		CraftPlayer cp = (CraftPlayer)player;
 		GameProfile profile = cp.getProfile();
 		if (profile != null) {
-			PropertyMap pm = profile.getProperties();
+			PropertyMap pm = profile.properties();
 			if (pm != null) {
 				Collection<Property> txt = pm.get("textures");
 				Property textureProperty = Iterables.getFirst(pm.get("textures"), null);
