@@ -8,19 +8,19 @@ import org.dynmap.bukkit.helper.BukkitVersionHelper;
 
 public class Helper {
 
-	private static BukkitVersionHelper loadVersionHelper(String classname) {
-		try {
-			Class<?> c = Class.forName(classname);
-			Constructor<?> cons = c.getConstructor();
-			return (BukkitVersionHelper) cons.newInstance();
-		} catch (Exception x) {
-			Log.severe("Error loading " + classname, x);
-			return null;
-		}
-	}
+        private static BukkitVersionHelper loadVersionHelper(String classname) {
+                try {
+                        Class<?> c = Class.forName(classname);
+                        Constructor<?> cons = c.getConstructor();
+                        return (BukkitVersionHelper) cons.newInstance();
+                } catch (Exception x) {
+                        Log.severe("Error loading " + classname, x);
+                        return null;
+                }
+        }
     public static final BukkitVersionHelper getHelper() {
         if (BukkitVersionHelper.helper == null) {
-        	String v = Bukkit.getServer().getVersion();
+                String v = Bukkit.getServer().getVersion();
             Log.info("version=" + v);
             if (v.contains("MCPC")) {
                 Log.severe("*********************************************************************************");
@@ -52,35 +52,44 @@ public class Helper {
             else if (v.contains("(MC: 1.21.5)")) {
                 BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v121_5.BukkitVersionHelperSpigot121_5");
             }
+            else if (v.contains("(MC: 1.21.7)")) {
+                BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v121_7.BukkitVersionHelperSpigot121_7");
+            }
+            else if (v.contains("(MC: 1.21.8)")) {
+                BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v121_8.BukkitVersionHelperSpigot121_8");
+            }
+            else if (v.contains("(MC: 1.21.10)")) {
+                BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v121_10.BukkitVersionHelperSpigot121_10");
+            }
             else if (v.contains("(MC: 1.21.")) {
                 BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v121_6.BukkitVersionHelperSpigot121_6");
             }
             else if (v.contains("(MC: 1.20)") || v.contains("(MC: 1.20.1)")) {
-            	BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v120.BukkitVersionHelperSpigot120");
+                BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v120.BukkitVersionHelperSpigot120");
             }
             else if (v.contains("(MC: 1.20.2)")) {
-            	BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v120_2.BukkitVersionHelperSpigot120_2");
+                BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v120_2.BukkitVersionHelperSpigot120_2");
             }
             else if (v.contains("(MC: 1.20.3)") || v.contains("(MC: 1.20.4)")) {
-            	BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v120_4.BukkitVersionHelperSpigot120_4");
+                BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v120_4.BukkitVersionHelperSpigot120_4");
             }
             else if (v.contains("(MC: 1.20.")) {
-            	BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v120_5.BukkitVersionHelperSpigot120_5");
+                BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v120_5.BukkitVersionHelperSpigot120_5");
             }
             else if (v.contains("(MC: 1.19)") || v.contains("(MC: 1.19.1)") || v.contains("(MC: 1.19.2)")) {
-            	BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v119.BukkitVersionHelperSpigot119");
+                BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v119.BukkitVersionHelperSpigot119");
             }
             else if (v.contains("(MC: 1.19.3)")) {
-            	BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v119_3.BukkitVersionHelperSpigot119_3");
+                BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v119_3.BukkitVersionHelperSpigot119_3");
             }
             else if (v.contains("(MC: 1.19.")) {
-            	BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v119_4.BukkitVersionHelperSpigot119_4");
+                BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v119_4.BukkitVersionHelperSpigot119_4");
             }
             else if (v.contains("(MC: 1.18)") || (v.contains("(MC: 1.18.1)"))) {
-            	BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v118.BukkitVersionHelperSpigot118");
+                BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v118.BukkitVersionHelperSpigot118");
             }
             else if (v.contains("(MC: 1.18")) {
-            	BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v118_2.BukkitVersionHelperSpigot118_2");
+                BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v118_2.BukkitVersionHelperSpigot118_2");
             }
             else if (v.contains("(MC: 1.17")) {
                 BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v117.BukkitVersionHelperSpigot117");
@@ -112,7 +121,7 @@ public class Helper {
                 BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v113_2.BukkitVersionHelperSpigot113_2");
             }
             else {
-            	BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.BukkitVersionHelperCB");
+                BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.BukkitVersionHelperCB");
             }
         }
         return BukkitVersionHelper.helper;

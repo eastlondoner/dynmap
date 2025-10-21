@@ -35,12 +35,12 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 35997
-externalPort = 3000
+localPort = 33435
+externalPort = 3001
 
 [[ports]]
-localPort = 42705
-externalPort = 3001
+localPort = 35997
+externalPort = 3000
 
 [deployment]
 build = ["sh", "-c", "./gradlew :spigot:build :fabric-1.21.6:build :forge-1.21.6:build && cp target/* public/downloads"]

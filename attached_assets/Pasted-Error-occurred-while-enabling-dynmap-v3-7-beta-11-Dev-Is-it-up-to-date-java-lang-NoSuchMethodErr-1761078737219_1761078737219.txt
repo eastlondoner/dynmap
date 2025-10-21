@@ -1,0 +1,69 @@
+Error occurred while enabling dynmap v3.7-beta-11-Dev (Is it up to date?)
+
+java.lang.NoSuchMethodError: 'net.minecraft.core.RegistryAccess$Frozen net.minecraft.server.MinecraftServer.ba()'
+
+	at dynmap.jar/org.dynmap.bukkit.helper.v121_6.BukkitVersionHelperSpigot121_6.getBiomeReg(BukkitVersionHelperSpigot121_6.java:104) ~[dynmap.jar:?]
+
+	at dynmap.jar/org.dynmap.bukkit.helper.v121_6.BukkitVersionHelperSpigot121_6.getBiomeBaseList(BukkitVersionHelperSpigot121_6.java:117) ~[dynmap.jar:?]
+
+	at dynmap.jar/org.dynmap.bukkit.DynmapPlugin.loadExtraBiomes(DynmapPlugin.java:851) ~[dynmap.jar:?]
+
+	at dynmap.jar/org.dynmap.bukkit.DynmapPlugin.onEnable(DynmapPlugin.java:936) ~[dynmap.jar:?]
+
+	at org.bukkit.plugin.java.JavaPlugin.setEnabled(JavaPlugin.java:279) ~[paper-api-1.21.10-R0.1-SNAPSHOT.jar:?]
+
+	at io.papermc.paper.plugin.manager.PaperPluginInstanceManager.enablePlugin(PaperPluginInstanceManager.java:202) ~[paper-1.21.10.jar:1.21.10-84-bac3da1]
+
+	at io.papermc.paper.plugin.manager.PaperPluginManagerImpl.enablePlugin(PaperPluginManagerImpl.java:109) ~[paper-1.21.10.jar:1.21.10-84-bac3da1]
+
+	at org.bukkit.plugin.SimplePluginManager.enablePlugin(SimplePluginManager.java:520) ~[paper-api-1.21.10-R0.1-SNAPSHOT.jar:?]
+
+	at org.bukkit.craftbukkit.CraftServer.enablePlugin(CraftServer.java:640) ~[paper-1.21.10.jar:1.21.10-84-bac3da1]
+
+	at org.bukkit.craftbukkit.CraftServer.enablePlugins(CraftServer.java:596) ~[paper-1.21.10.jar:1.21.10-84-bac3da1]
+
+	at net.minecraft.server.MinecraftServer.initPostWorld(MinecraftServer.java:636) ~[paper-1.21.10.jar:1.21.10-84-bac3da1]
+
+	at net.minecraft.server.dedicated.DedicatedServer.initServer(DedicatedServer.java:368) ~[paper-1.21.10.jar:1.21.10-84-bac3da1]
+
+	at net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:1262) ~[paper-1.21.10.jar:1.21.10-84-bac3da1]
+
+	at net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:383) ~[paper-1.21.10.jar:1.21.10-84-bac3da1]
+
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[?:?]
+
+[20:27:23 INFO]: [dynmap] Disabling dynmap v3.7-beta-11-Dev
+
+[20:27:23 ERROR]: Error occurred while disabling dynmap v3.7-beta-11-Dev
+
+java.lang.NullPointerException: Cannot invoke "org.dynmap.DynmapCore.disableCore()" because "this.core" is null
+
+	at dynmap.jar/org.dynmap.bukkit.DynmapPlugin.onDisable(DynmapPlugin.java:1094) ~[dynmap.jar:?]
+
+	at org.bukkit.plugin.java.JavaPlugin.setEnabled(JavaPlugin.java:285) ~[paper-api-1.21.10-R0.1-SNAPSHOT.jar:?]
+
+	at io.papermc.paper.plugin.manager.PaperPluginInstanceManager.disablePlugin(PaperPluginInstanceManager.java:237) ~[paper-1.21.10.jar:1.21.10-84-bac3da1]
+
+	at io.papermc.paper.plugin.manager.PaperPluginManagerImpl.disablePlugin(PaperPluginManagerImpl.java:114) ~[paper-1.21.10.jar:1.21.10-84-bac3da1]
+
+	at org.bukkit.plugin.SimplePluginManager.disablePlugin(SimplePluginManager.java:550) ~[paper-api-1.21.10-R0.1-SNAPSHOT.jar:?]
+
+	at io.papermc.paper.plugin.manager.PaperPluginInstanceManager.enablePlugin(PaperPluginInstanceManager.java:206) ~[paper-1.21.10.jar:1.21.10-84-bac3da1]
+
+	at io.papermc.paper.plugin.manager.PaperPluginManagerImpl.enablePlugin(PaperPluginManagerImpl.java:109) ~[paper-1.21.10.jar:1.21.10-84-bac3da1]
+
+	at org.bukkit.plugin.SimplePluginManager.enablePlugin(SimplePluginManager.java:520) ~[paper-api-1.21.10-R0.1-SNAPSHOT.jar:?]
+
+	at org.bukkit.craftbukkit.CraftServer.enablePlugin(CraftServer.java:640) ~[paper-1.21.10.jar:1.21.10-84-bac3da1]
+
+	at org.bukkit.craftbukkit.CraftServer.enablePlugins(CraftServer.java:596) ~[paper-1.21.10.jar:1.21.10-84-bac3da1]
+
+	at net.minecraft.server.MinecraftServer.initPostWorld(MinecraftServer.java:636) ~[paper-1.21.10.jar:1.21.10-84-bac3da1]
+
+	at net.minecraft.server.dedicated.DedicatedServer.initServer(DedicatedServer.java:368) ~[paper-1.21.10.jar:1.21.10-84-bac3da1]
+
+	at net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:1262) ~[paper-1.21.10.jar:1.21.10-84-bac3da1]
+
+	at net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:383) ~[paper-1.21.10.jar:1.21.10-84-bac3da1]
+
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[?:?]
