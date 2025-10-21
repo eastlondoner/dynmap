@@ -36,6 +36,24 @@ Fabric and Forge builds have been removed from this configuration.
 
 ### Recent Updates
 
+**October 21, 2025: Added Texture Mappings for 1.21.10 New Blocks**
+
+Added complete texture support for all new blocks introduced in Minecraft 1.21.10 to eliminate "no texture mapping" warnings:
+
+**New Foliage Blocks:**
+- `short_dry_grass` - Desert/badlands one-block dry grass
+- `tall_dry_grass` - Fuller variant of dry grass (still 1 block tall)
+- `bush` - Decorative foliage block
+
+**New Decorative Blocks (11 wood variants):**
+- Wood shelves with item display slots: `oak_shelf`, `spruce_shelf`, `birch_shelf`, `jungle_shelf`, `acacia_shelf`, `dark_oak_shelf`, `mangrove_shelf`, `cherry_shelf`, `crimson_shelf`, `warped_shelf`, `bamboo_shelf`
+
+Technical implementation:
+- Added texture definitions to `DynmapCore/src/main/resources/texture_1.txt`
+- Configured proper transparency settings (TRANSPARENT for foliage, SEMITRANSPARENT for shelves)
+- Used version tag `[1.21.10-]` to ensure compatibility with future versions
+- Maps will now render these blocks correctly instead of showing blank/default textures
+
 **October 2025: Configured for Minecraft 1.21.7, 1.21.8, and 1.21.10**
 
 The build system has been streamlined to support only three specific Minecraft versions:

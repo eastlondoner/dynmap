@@ -2,7 +2,7 @@
 version:1.13-
 # block:id=<block-id>,data=<data-val|*>,top=<index>,bottom=<index>,north=<index>,south=<index>,east=<index>,west=<index>,allfaces=<index>,allsides=<index>
 # <index>=0-255 (index of patch in terrain.png), -1=clear, 
-#	1xxx=biome tint from grasscolor.png,
+#       1xxx=biome tint from grasscolor.png,
 #   2xxx=biome tint from foliagecolor.png,
 #   3xxx=biome tint from watercolor.png
 #   4xxx=rotate texture 90,
@@ -1364,10 +1364,10 @@ block:id=daylight_detector,data=0-15,allsides=0:daylight_detector_side,bottom=0:
 # (152) Block of Redstone
 block:id=redstone_block,data=*,allfaces=0:redstone_block,stdrot=true
 
-# (153)	Nether Quartz Ore
+# (153) Nether Quartz Ore
 block:id=nether_quartz_ore,data=*,allfaces=0:nether_quartz_ore,stdrot=true
 
-# (154)	Hopper
+# (154) Hopper
 block:id=hopper,data=*,allsides=0:hopper_outside,top=0:hopper_inside,bottom=0:hopper_outside,stdrot=true
 
 #  Block of Quartz
@@ -1389,7 +1389,7 @@ block:id=quartz_stairs,patch0=0:quartz_block_side,patch1=0:quartz_block_top,patc
 [-1.16.5]block:id=activator_rail,data=6-11,patch0=0:activator_rail,transparency=TRANSPARENT
 [1.17-]block:id=activator_rail,data=12-23,patch0=0:activator_rail,transparency=TRANSPARENT
 
-# (158)	Dropper
+# (158) Dropper
 block:id=%dropper,state=facing:north,patch0=0:furnace_side,patch1=0:furnace_top,patch2=0:dropper_front,patch3=0:furnace_side,patch4=0:furnace_top,patch5=0:furnace_side,stdrot=true
 block:id=%dropper,state=facing:east,patch0=0:dropper_front,patch1=0:furnace_side,patch2=0:furnace_top,stdrot=true
 block:id=%dropper,state=facing:south,patch0=0:dropper_front,patch1=0:furnace_side,patch2=0:furnace_top,stdrot=true
@@ -5253,4 +5253,35 @@ block:id=%melon_stem,patch0=0:melon_stem,blockcolor=foliagebiome,transparency=TR
 [1.21.6-]block:id=%dried_ghast,state=hydration:3/facing:west,patch0=0:dried_ghast_hydration_3_top,patch1=0:dried_ghast_hydration_3_bottom,patch2=0:dried_ghast_hydration_3_east,patch3=0:dried_ghast_hydration_3_south,patch4=0:dried_ghast_hydration_3_west,patch5=0:dried_ghast_hydration_3_north,patch6=0:dried_ghast_hydration_3_tentacles,transparency=SEMITRANSPARENT,stdrot=true
 [1.21.6-]block:id=%dried_ghast,state=hydration:1/facing:east,patch0=0:dried_ghast_hydration_1_top,patch1=0:dried_ghast_hydration_1_bottom,patch2=0:dried_ghast_hydration_1_east,patch3=0:dried_ghast_hydration_1_south,patch4=0:dried_ghast_hydration_1_west,patch5=0:dried_ghast_hydration_1_north,patch6=0:dried_ghast_hydration_1_tentacles,transparency=SEMITRANSPARENT,stdrot=true
 [1.21.6-]block:id=%dried_ghast,state=hydration:2/facing:east,patch0=0:dried_ghast_hydration_2_top,patch1=0:dried_ghast_hydration_2_bottom,patch2=0:dried_ghast_hydration_2_east,patch3=0:dried_ghast_hydration_2_south,patch4=0:dried_ghast_hydration_2_west,patch5=0:dried_ghast_hydration_2_north,patch6=0:dried_ghast_hydration_2_tentacles,transparency=SEMITRANSPARENT,stdrot=true
-[1.21.6-]block:id=%dried_ghast,state=hydration:3/facing:east,patch0=0:dried_ghast_hydration_3_top,patch1=0:dried_ghast_hydration_3_bottom,patch2=0:dried_ghast_hydration_3_east,patch3=0:dried_ghast_hydration_3_south,patch4=0:dried_ghast_hydration_3_west,patch5=0:dried_ghast_hydration_3_north,patch6=0:dried_ghast_hydration_3_tentacles,transparency=SEMITRANSPARENT,stdrot=true
+[1.21.6-]block:id=%dried_ghast,state=hydration:3/facing:east,patch0=0:dried_ghast_hydration_3_top,patch1=0:dried_ghast_hydration_3_bottom,patch2=0:dried_ghast_hydration_3_east,patch3=0:dried_ghast_hydration_3_south,patch4=0:dried_ghast_hydration_3_west,patch5=0:dried_ghast_hydration_3_north,patch6=0:dried_ghast_hydration_3_tentacles,transparency=SEMITRANSPARENT,stdrot=true# Minecraft 1.21.10 New Blocks
+# Dry Grass Blocks (Added in 1.21.5/1.21.10)
+[1.21.10-]texture:id=short_dry_grass,filename=assets/minecraft/textures/block/short_dry_grass.png,xcount=1,ycount=1
+[1.21.10-]block:id=%short_dry_grass,patch0-1=0:short_dry_grass,transparency=TRANSPARENT,stdrot=true
+[1.21.10-]texture:id=tall_dry_grass,filename=assets/minecraft/textures/block/tall_dry_grass.png,xcount=1,ycount=1
+[1.21.10-]block:id=%tall_dry_grass,patch0-1=0:tall_dry_grass,transparency=TRANSPARENT,stdrot=true
+# Bush Block (Added in 1.21.5/1.21.10)
+[1.21.10-]texture:id=bush,filename=assets/minecraft/textures/block/bush.png,xcount=1,ycount=1
+[1.21.10-]block:id=%bush,patch0-1=0:bush,transparency=TRANSPARENT,stdrot=true
+# Wood Shelves (All variants - Added in 1.21.10)
+[1.21.10-]texture:id=acacia_shelf,filename=assets/minecraft/textures/block/acacia_shelf.png,xcount=1,ycount=1
+[1.21.10-]block:id=%acacia_shelf,allfaces=0:acacia_shelf,transparency=SEMITRANSPARENT,stdrot=true
+[1.21.10-]texture:id=bamboo_shelf,filename=assets/minecraft/textures/block/bamboo_shelf.png,xcount=1,ycount=1
+[1.21.10-]block:id=%bamboo_shelf,allfaces=0:bamboo_shelf,transparency=SEMITRANSPARENT,stdrot=true
+[1.21.10-]texture:id=birch_shelf,filename=assets/minecraft/textures/block/birch_shelf.png,xcount=1,ycount=1
+[1.21.10-]block:id=%birch_shelf,allfaces=0:birch_shelf,transparency=SEMITRANSPARENT,stdrot=true
+[1.21.10-]texture:id=cherry_shelf,filename=assets/minecraft/textures/block/cherry_shelf.png,xcount=1,ycount=1
+[1.21.10-]block:id=%cherry_shelf,allfaces=0:cherry_shelf,transparency=SEMITRANSPARENT,stdrot=true
+[1.21.10-]texture:id=crimson_shelf,filename=assets/minecraft/textures/block/crimson_shelf.png,xcount=1,ycount=1
+[1.21.10-]block:id=%crimson_shelf,allfaces=0:crimson_shelf,transparency=SEMITRANSPARENT,stdrot=true
+[1.21.10-]texture:id=dark_oak_shelf,filename=assets/minecraft/textures/block/dark_oak_shelf.png,xcount=1,ycount=1
+[1.21.10-]block:id=%dark_oak_shelf,allfaces=0:dark_oak_shelf,transparency=SEMITRANSPARENT,stdrot=true
+[1.21.10-]texture:id=jungle_shelf,filename=assets/minecraft/textures/block/jungle_shelf.png,xcount=1,ycount=1
+[1.21.10-]block:id=%jungle_shelf,allfaces=0:jungle_shelf,transparency=SEMITRANSPARENT,stdrot=true
+[1.21.10-]texture:id=mangrove_shelf,filename=assets/minecraft/textures/block/mangrove_shelf.png,xcount=1,ycount=1
+[1.21.10-]block:id=%mangrove_shelf,allfaces=0:mangrove_shelf,transparency=SEMITRANSPARENT,stdrot=true
+[1.21.10-]texture:id=oak_shelf,filename=assets/minecraft/textures/block/oak_shelf.png,xcount=1,ycount=1
+[1.21.10-]block:id=%oak_shelf,allfaces=0:oak_shelf,transparency=SEMITRANSPARENT,stdrot=true
+[1.21.10-]texture:id=spruce_shelf,filename=assets/minecraft/textures/block/spruce_shelf.png,xcount=1,ycount=1
+[1.21.10-]block:id=%spruce_shelf,allfaces=0:spruce_shelf,transparency=SEMITRANSPARENT,stdrot=true
+[1.21.10-]texture:id=warped_shelf,filename=assets/minecraft/textures/block/warped_shelf.png,xcount=1,ycount=1
+[1.21.10-]block:id=%warped_shelf,allfaces=0:warped_shelf,transparency=SEMITRANSPARENT,stdrot=true
