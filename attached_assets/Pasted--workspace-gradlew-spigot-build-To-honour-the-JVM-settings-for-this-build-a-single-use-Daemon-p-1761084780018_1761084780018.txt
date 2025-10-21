@@ -1,0 +1,76 @@
+~/workspace$ ./gradlew :spigot:build
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :DynmapCoreAPI:compileJava UP-TO-DATE
+> Task :DynmapCoreAPI:processResources NO-SOURCE
+> Task :DynmapCoreAPI:classes UP-TO-DATE
+> Task :DynmapCoreAPI:jar UP-TO-DATE
+> Task :dynmap-api:compileJava UP-TO-DATE
+> Task :dynmap-api:processResources NO-SOURCE
+> Task :dynmap-api:classes UP-TO-DATE
+> Task :dynmap-api:jar UP-TO-DATE
+> Task :DynmapCore:compileJava UP-TO-DATE
+> Task :DynmapCore:processResources UP-TO-DATE
+> Task :DynmapCore:classes UP-TO-DATE
+> Task :DynmapCore:shadowJar UP-TO-DATE
+
+> Task :bukkit-helper:compileJava FAILED
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+/home/runner/workspace/bukkit-helper/src/main/java/org/dynmap/bukkit/helper/AbstractMapChunkCache.java:13: error: cannot find symbol
+import org.dynmap.DynmapChunk;
+                 ^
+  symbol:   class DynmapChunk
+  location: package org.dynmap
+/home/runner/workspace/bukkit-helper/src/main/java/org/dynmap/bukkit/helper/AbstractMapChunkCache.java:14: error: cannot find symbol
+import org.dynmap.DynmapCore;
+                 ^
+  symbol:   class DynmapCore
+  location: package org.dynmap
+/home/runner/workspace/bukkit-helper/src/main/java/org/dynmap/bukkit/helper/AbstractMapChunkCache.java:15: error: cannot find symbol
+import org.dynmap.DynmapWorld;
+                 ^
+  symbol:   class DynmapWorld
+  location: package org.dynmap
+/home/runner/workspace/bukkit-helper/src/main/java/org/dynmap/bukkit/helper/AbstractMapChunkCache.java:16: error: cannot find symbol
+import org.dynmap.Log;
+                 ^
+  symbol:   class Log
+  location: package org.dynmap
+/home/runner/workspace/bukkit-helper/src/main/java/org/dynmap/bukkit/helper/SnapshotCache.java:11: error: cannot find symbol
+import org.dynmap.utils.DynIntHashMap;
+                       ^
+  symbol:   class DynIntHashMap
+  location: package org.dynmap.utils
+/home/runner/workspace/bukkit-helper/src/main/java/org/dynmap/bukkit/helper/AbstractMapChunkCache.java:18: error: package org.dynmap.common does not exist
+import org.dynmap.common.BiomeMap;
+                        ^
+/home/runner/workspace/bukkit-helper/src/main/java/org/dynmap/bukkit/helper/AbstractMapChunkCache.java:22: error: cannot find symbol
+import org.dynmap.utils.DynIntHashMap;
+                       ^
+  symbol:   class DynIntHashMap
+  location: package org.dynmap.utils
+/home/runner/workspace/bukkit-helper/src/main/java/org/dynmap/bukkit/helper/AbstractMapChunkCache.java:23: error: cannot find symbol
+import org.dynmap.utils.MapChunkCache;
+                       ^
+  symbol:   class MapChunkCache
+  location: package org.dynmap.utils
+/home/runner/workspace/bukkit-helper/src/main/java/org/dynmap/bukkit/helper/AbstractMapChunkCache.java:24: error: cannot find symbol
+import org.dynmap.utils.MapIterator;
+                       ^
+  symbol:   class MapIterator
+  location: package org.dynmap.utils
+/home/runner/workspace/bukkit-helper/src/main/java/org/dynmap/bukkit/helper/AbstractMapChunkCache.java:25: error: cannot find symbol
+import org.dynmap.utils.BlockStep;
+                       ^
+  symbol:   class BlockStep
+  location: package org.dynmap.utils
+/home/runner/workspace/bukkit-helper/src/main/java/org/dynmap/bukkit/helper/AbstractMapChunkCache.java:26: error: cannot find symbol
+import org.dynmap.utils.VisibilityLimit;
+                       ^
+  symbol:   class VisibilityLimit
+  location: package org.dynmap.utils
+/home/runner/workspace/bukkit-helper/src/main/java/org/dynmap/bukkit/helper/AbstractMapChunkCache.java:31: error: cannot find symbol
+public abstract class AbstractMapChunkCache extends MapChunkCache {
+                                                    ^
