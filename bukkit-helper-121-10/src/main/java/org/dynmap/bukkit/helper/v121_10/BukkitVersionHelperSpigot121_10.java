@@ -1,9 +1,9 @@
 package org.dynmap.bukkit.helper.v121_10;
 
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_21_R10.CraftChunk;
-import org.bukkit.craftbukkit.v1_21_R10.CraftWorld;
-import org.bukkit.craftbukkit.v1_21_R10.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_21_R3.CraftChunk;
+import org.bukkit.craftbukkit.v1_21_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_21_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.dynmap.DynmapChunk;
 import org.dynmap.Log;

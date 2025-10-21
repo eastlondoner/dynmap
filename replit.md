@@ -39,9 +39,10 @@ Fabric and Forge builds have been removed from this configuration.
 **October 2025: Configured for Minecraft 1.21.7, 1.21.8, and 1.21.10**
 
 The build system has been streamlined to support only three specific Minecraft versions:
-- Created `bukkit-helper-121-7` for Minecraft 1.21.7 (uses NMS v1_21_R6)
-- Created `bukkit-helper-121-8` for Minecraft 1.21.8 (uses NMS v1_21_R7)
-- Created `bukkit-helper-121-10` for Minecraft 1.21.10 (uses NMS v1_21_R9)
+- Created `bukkit-helper-121-7` for Minecraft 1.21.7 (uses NMS v1_21_R3)
+- Created `bukkit-helper-121-8` for Minecraft 1.21.8 (uses NMS v1_21_R3)
+- Created `bukkit-helper-121-10` for Minecraft 1.21.10 (uses NMS v1_21_R3)
+- All three versions use the same NMS revision (v1_21_R3) as per Spigot's versioning scheme
 - Removed all other version helpers and Fabric/Forge modules from the build
 - Updated download portal to show only these three versions
 
